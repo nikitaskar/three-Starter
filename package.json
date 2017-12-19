@@ -20,9 +20,11 @@
   "dependencies": {
     "babel-plugin-glslify": "^2.0.0",
     "glslify": "^6.1.0",
+    "gsap": "^1.20.3",
     "orbit-controls": "^1.2.0",
     "path": "^0.12.7",
     "three": "^0.88.0",
-    "three-effectcomposer-es6": "0.0.4"
+    "three-effectcomposer-es6": "0.0.4",
+    "three.meshline": "^1.0.3"
   }
 }
