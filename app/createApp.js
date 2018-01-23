@@ -28,7 +28,6 @@ class createApp {
 
 		this.sphereMaterial = new THREE.MeshBasicMaterial({
 		})
-		
 
 
 		this.sphereGeometry = new THREE.SphereGeometry(6,8,8)
@@ -37,10 +36,7 @@ class createApp {
 		this.scene.add(this.sphere)
 
 		this.renderer = new THREE.WebGLRenderer({antialias: true})
-		this.renderer.setSize(this.winWidth, this.winHeight)
-		document.body.appendChild(this.renderer.domElement)
 
-		window.addEventListener('resize', this.onResize.bind(this))
 		this.animate()
 	}
 

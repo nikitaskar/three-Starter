@@ -10,5 +10,7 @@ class Grid {
             let angle = Math.PI/180*(120*i)
             this.blueprint.push(Math.cos(a), Math.sin(a), 0)
         }
+
+        
     }
 }
