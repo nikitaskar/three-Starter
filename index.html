@@ -17,6 +17,37 @@
 	</style>
 </head>
 <body>
+
+	<script id="vertexShader" type="x-shader/x-vertex">
+		//blue print attribute position
+		uniform mat4 modelViewMatrix;
+		uniform mat4 projectionMatrix;
+		uniform mat3 normalMatrix;
+
+		attribute vec3 position;
+
+		//instance attribute
+		attribute vec3 translation;
+		attribute vec4 rotation;
+
+		vec3 transform(inout vec3 position ,vec3 T, vec4 R) {
+			position += T;
+
+			return position;
+		}
+
+		void main() {
+			vec3 pos = position;
+			transform(pos, translation, rotation);
+
+			gl_Position  = projectionMatrix * modelViewMatrix * vec4(pos, 1.);
+		}
+	</script>
+	<script id="fragmentShader" type="x-shader/x-fragment">
+		void main() {
+			gl_FragColor = vec4(1.);
+		}
+	</script>
 	<script src="bundle.js"></script>
 </body>
 </html>
