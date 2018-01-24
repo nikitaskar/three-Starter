@@ -16,14 +16,14 @@ class createApp {
 		this.camera = new THREE.PerspectiveCamera( 75,this.winRatio, 0.005, 1000 )
 		this.camera2 = new THREE.PerspectiveCamera( 75,this.winRatio, 0.005, 1000 )
 		this.camera.position.z = 1
-		this.camera2.position.z = 1
+		this.camera2.position.z = 10
 		this.target = new THREE.Vector3()
 		console.log( )
 		this.scene = new THREE.Scene();
 
 		this.controls = orbitControls({
 			position : [0,0,0],
-			distance: 0,
+			distance: 0.01,
 			zoom: true,
 			zoomSpeed: 0.00007,
 			rotateSpeed: 0.007,
