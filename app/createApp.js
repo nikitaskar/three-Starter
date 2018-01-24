@@ -77,10 +77,11 @@ class createApp {
 
 		this.treatedCoords = []
 		
-
+		this.time = 0
 		//this.customGeo()
-		this.animate()
 		this.initCoords()
+		this.animate()
+		
 	}
 
 	initCoords() {
@@ -161,6 +162,9 @@ class createApp {
 		this.camera2.position.fromArray(this.controls.position);
 		this.camera2.up.fromArray(this.controls.up);
 		this.camera2.lookAt(this.target);
+		this.time += 1
+		this.grid.grid.material.uniforms.u_time.value = this.time
+		//this.grid.grid.material.uniforms.u_time = 
 		this.renderer.render(this.scene, this.camera2)
 	}
 }

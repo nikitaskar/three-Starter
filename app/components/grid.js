@@ -84,7 +84,19 @@ class Grid {
         this.instancedGeo.addAttribute('scale', new THREE.InstancedBufferAttribute(scale,3,1))
 
         let material = new THREE.RawShaderMaterial(
-            {   
+            {   uniforms: {
+                    u_time: {
+                        type:'f',
+                        value:1.0,
+                    },
+                    u_resolution: {
+                        type: 'v2',
+                        value : {
+                            x: window.innerWidth,
+                            y:window.innerHeight,
+                        }
+                    }
+                },
                 vertexShader: document.getElementById('vertexShader').innerHTML,
                 fragmentShader: document.getElementById('fragmentShader').innerHTML,
                 side: THREE.DoubleSide,
