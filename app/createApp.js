@@ -25,6 +25,7 @@ class createApp {
 			position : [0,0,0],
 			distance: 0,
 			zoom: true,
+			zoomSpeed: 0.00007,
 			rotateSpeed: 0.007,
 			damping: 0.05,
 		})
@@ -52,7 +53,7 @@ class createApp {
 		let mesh = new THREE.Mesh(geo, material)
 		console.log(mesh)
 		mesh.rotation.z = Math.PI/4
-		this.scene.add(mesh)
+		//this.scene.add(mesh)
 
 		console.log(this.grid)
 		
@@ -60,22 +61,24 @@ class createApp {
 
 		this.rawCoords = [
 			{
-				x:0,
+				x:this.winWidth/15,
 				y:0,
 			},
 
 			{	
-				x:this.winWidth/6,
-				y: this.winHeight/6
+				x:Math.cos(2*Math.PI/3)*this.winWidth/15,
+				y:Math.sin(2*Math.PI/3)*this.winWidth/15
 			},
 			{	
-				x:0,
-				y: this.winHeight/3
+				x:Math.cos((2*Math.PI/3)*2)*this.winWidth/15,
+				y:Math.sin((2*Math.PI/3)*2)*this.winWidth/15
 			},
 		]
 
 		this.treatedCoords = []
 		
+
+		//this.customGeo()
 		this.animate()
 		this.initCoords()
 	}
@@ -87,13 +90,51 @@ class createApp {
 			let treatedCoordsY = -((this.rawCoords[i].y)/this.winHeight)*2+1	
 			
 			this.newPos = new THREE.Vector3(treatedCoordsX, treatedCoordsY,-1).unproject(this.camera)
-			
+			console.log(new THREE.Vector3(1, -1,-1).unproject(this.camera))
 			this.treatedCoords.push(this.newPos.x, this.newPos.y, this.newPos.z)
 
 		}
-		this.grid = new Grid({count: 7, scene: this.scene, coords:this.treatedCoords})
-		console.log(this.treatedCoords)
+		this.grid = new Grid({count: 315, scene: this.scene, coords:this.treatedCoords, pos: new THREE.Vector3(1, -1,-1).unproject(this.camera)})
 
+	}
+
+	customGeo() {
+		var geometry = new THREE.BufferGeometry();
+		var positions = new Float32Array(30 ); // 3 vertices per point
+		geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+		console.log(geometry)
+		var positions  = geometry.attributes.position.array
+		console.log(positions)
+		var x, y, z, index;
+		x = y = z = index = 0;
+		
+		for ( var i = 0, l = 10; i < l; i ++ ) {
+			
+			positions[ index ++ ] = x;
+			positions[ index ++ ] = y;
+			positions[ index ++ ] = z;
+		
+			x += ( Math.random() - 0.5 ) * 30;
+			y += ( Math.random() - 0.5 ) * 30;
+			z += ( Math.random() - 0.5 ) * 30;
+		
+		}
+
+		console.log(geometry)
+		var face;
+		face = new THREE.Face3 (0,1,2); face.materialIndex = 0;
+		geometry.faces.push (face);
+		face = new THREE.Face3 (3,4,5); face.materialIndex = 0;
+		geometry.faces.push (face);
+
+		geometry.computeBoundingSphere();
+		geometry.computeFaceNormals();
+		geometry.computeVertexNormals();
+
+ 
+		var material = new THREE.MeshBasicMaterial({color:"#ffffff", wireframe: true});
+		this.cube = new THREE.Mesh (geometry, material);
+		this.scene.add (this.cube);
 	}
 
 	onMouseMove(e) {
@@ -119,7 +160,6 @@ class createApp {
 		this.controls.update();
 		this.camera2.position.fromArray(this.controls.position);
 		this.camera2.up.fromArray(this.controls.up);
-
 		this.camera2.lookAt(this.target);
 		this.renderer.render(this.scene, this.camera2)
 	}

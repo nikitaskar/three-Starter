@@ -29,16 +29,18 @@
 		//instance attribute
 		attribute vec3 translation;
 		attribute vec4 rotation;
-
-		vec3 transform(inout vec3 position ,vec3 T, vec4 R) {
+		attribute vec3 scale;
+		vec3 transform(inout vec3 position ,vec3 T, vec4 R, vec3 S) {
+			position*= S;
+			//position += 2.0 * cross( R.xyz, cross( R.xyz, position ) + R.w * position );
 			position += T;
-
+			
 			return position;
 		}
 
 		void main() {
 			vec3 pos = position;
-			transform(pos, translation, rotation);
+			transform(pos, translation, rotation, scale);
 
 			gl_Position  = projectionMatrix * modelViewMatrix * vec4(pos, 1.);
 		}
