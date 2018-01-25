@@ -6,7 +6,7 @@
 		canvas {
 			width: 100%;
 			height: 100%;
-			background: #020509;
+			background: #000;
 		}
 
 		html, body {
@@ -30,9 +30,9 @@
 		attribute vec3 translation;
 		attribute vec4 rotation;
 		attribute vec3 scale;
+
 		vec3 transform(inout vec3 position ,vec3 T, vec4 R, vec3 S) {
 			position*= S;
-			//position += 2.0 * cross( R.xyz, cross( R.xyz, position ) + R.w * position );
 			position += T;
 			
 			return position;
@@ -130,31 +130,60 @@
 										  dot(p2,x2), dot(p3,x3) ) );
 			}
 			
+			attribute float rank;
 			precision highp float;
 			uniform float u_time;
 			varying vec3 vPos;
 			varying vec2 vUv;
+			varying float vRank;
+			varying vec4 color;
+			uniform vec2 u_mouse;
 		void main() {
 			vec3 pos = position;
-		
-			transform(pos, translation, rotation, scale);	
-			//pos.z = pos.z + snoise(pos*10000.+(u_time/300.))/1000.;
-			gl_Position  = projectionMatrix * modelViewMatrix * vec4(pos, 1.);
-			vPos = pos;
-			vUv = normalize(pos.xy);
+			vRank = rank;
+
+			
+			
+			
+			vec3 tPos = transform(pos, translation, rotation, scale);	
+			tPos.z = tPos.z + snoise(pos*10000.)/1000.;
+			gl_Position  = projectionMatrix * modelViewMatrix * vec4(tPos, 1.);
+			vPos = tPos;		
+
+			// Position de ta lumière 
+			vec3 lightposition = vec3(10000.*u_mouse.x, 10000.*u_mouse.y, 10.);
+
+
+			// Vecteur différence
+			vec3 lightDiff = lightposition - normalize(tPos);
+
+			// Plus le vecteur est grand moins la lumière est importante
+			float distanceFactor = 1. - min(1., length(lightDiff)/40000.);
+
+			// Produit vectorielle de la position et la source de lumière pour la réflection
+			float intensity = dot( tPos, lightDiff);
+
+
+			 color = vec4(intensity*distanceFactor, intensity*distanceFactor, intensity*distanceFactor, 1.);
 		}
 	</script>
 	<script id="fragmentShader" type="x-shader/x-fragment">
+		#extension GL_OES_standard_derivatives : enable
 		precision highp float;
-	
+
 		uniform vec2 u_resolution;	
-
+		uniform sampler2D texture;
+		uniform vec2 u_mouse;
+		varying float vRank;
 		varying vec3 vPos;
-		varying vec2 vUv;
-
+varying vec4 color;
 		void main() {
 			vec2 st = gl_FragCoord.xy/u_resolution.xy;
-			gl_FragColor = vec4(1., 1., 1., 1.);
+			vec3 fdx = dFdx( vPos );
+				vec3 fdy = dFdy( vPos );
+				vec3 normal = normalize( cross( fdx, fdy ) );
+				float diffuse = dot( normal, vec3( u_mouse.x, u_mouse.y, 0.06 ) );
+				gl_FragColor = color/10.*diffuse*100.;
 		}
 	</script>
 	<script src="bundle.js"></script>
