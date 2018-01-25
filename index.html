@@ -146,7 +146,7 @@
 			
 			
 			vec3 tPos = transform(pos, translation, rotation, scale);	
-			tPos.z = tPos.z + snoise(pos*10000.)/1000.;
+			tPos.z = tPos.z + snoise(pos*10000.+ u_time/2000.)/1000.;
 			gl_Position  = projectionMatrix * modelViewMatrix * vec4(tPos, 1.);
 			vPos = tPos;		
 
@@ -155,7 +155,7 @@
 
 
 			// Vecteur différence
-			vec3 lightDiff = lightposition - normalize(tPos);
+			vec3 lightDiff = lightposition - abs(normalize(tPos));
 
 			// Plus le vecteur est grand moins la lumière est importante
 			float distanceFactor = 1. - min(1., length(lightDiff)/40000.);
