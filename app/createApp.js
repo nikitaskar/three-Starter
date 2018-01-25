@@ -23,7 +23,7 @@ class createApp {
 
 		this.controls = orbitControls({
 			position : [0,0,0],
-			distance: 0.01,
+			distance: 0.005,
 			zoom: true,
 			zoomSpeed: 0.00007,
 			rotateSpeed: 0.007,

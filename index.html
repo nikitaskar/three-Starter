@@ -133,21 +133,28 @@
 			precision highp float;
 			uniform float u_time;
 			varying vec3 vPos;
+			varying vec2 vUv;
 		void main() {
 			vec3 pos = position;
+		
 			transform(pos, translation, rotation, scale);	
-			pos.z = pos.z + snoise(pos*10000.+(u_time/300.))/1000.;
+			//pos.z = pos.z + snoise(pos*10000.+(u_time/300.))/1000.;
 			gl_Position  = projectionMatrix * modelViewMatrix * vec4(pos, 1.);
 			vPos = pos;
+			vUv = normalize(pos.xy);
 		}
 	</script>
 	<script id="fragmentShader" type="x-shader/x-fragment">
 		precision highp float;
-		varying vec3 vPos;
+	
 		uniform vec2 u_resolution;	
+
+		varying vec3 vPos;
+		varying vec2 vUv;
+
 		void main() {
 			vec2 st = gl_FragCoord.xy/u_resolution.xy;
-			gl_FragColor = vec4(st.x, st.y, st.x, 1.);
+			gl_FragColor = vec4(1., 1., 1., 1.);
 		}
 	</script>
 	<script src="bundle.js"></script>

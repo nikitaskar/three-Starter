@@ -101,6 +101,7 @@ class Grid {
                 fragmentShader: document.getElementById('fragmentShader').innerHTML,
                 side: THREE.DoubleSide,
                 wireframe: true,
+                shading: THREE.flatShading,
             }
         )
         this.grid = new THREE.Mesh(this.instancedGeo, material)
