@@ -153,7 +153,7 @@
 			
 			vec3 tPos = transform(pos, translation, rotation, scale);
 			//tPos.z = 0.;
-			tPos.z = tPos.z+snoise(tPos*10000. + u_time/600.)/2000.;
+			//tPos.z = tPos.z+snoise(tPos*10000. + u_time/600.)/2000.;
 			gl_Position  = projectionMatrix * modelViewMatrix * vec4(tPos, 1.);
 				
 
