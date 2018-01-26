@@ -25,7 +25,7 @@ class createApp {
 
 		this.controls = orbitControls({
 			position : [0,0,0],
-			distance:0.0041,
+			distance:0.0007,
 			zoom: true,
 			zoomSpeed: 0.000007,
 			rotateSpeed: 0.007,
@@ -55,6 +55,14 @@ class createApp {
 				y:Math.sin((2*Math.PI/3)*2)*this.winWidth/101
 			},
 		]
+
+		// let geo = new THREE.PlaneGeometry(10,10,120,120);
+		// let mat = new THREE.MeshBasicMaterial({color:"#ffffff",wireframe:true})
+
+		// let meshh = new THREE.Mesh(geo, mat)
+		// this.scene.add(meshh)
+		// meshh.rotation.z = Math.PI/4
+		
 
 		this.treatedCoords = []
 		
@@ -116,7 +124,7 @@ class createApp {
 		this.grid.grid.material.uniforms.u_mouse.value.y = this.mousePos.y
 		
 
-		//this.grid.grid.material.uniforms.u_time = 
+		//this.grid.grid.material.uniforms.u_time = this.time
 		this.renderer.render(this.scene, this.camera2)
 	}
 }

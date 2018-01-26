@@ -140,7 +140,6 @@
 			vec3 transform(inout vec3 position ,vec3 T, vec4 R, vec3 S) {
 			position*= S;
 			position += T;
-			
 			return position;
 		}
 
@@ -158,7 +157,7 @@
 				
 
 			// Position de ta lumière 
-			vec3 lightposition = vec3(u_mouse.x*1.2, u_mouse.y*1.2, 0.0000998);
+			vec3 lightposition = vec3(u_mouse.x*1.5, u_mouse.y*1.4, 0.0000998);
 			vLight = lightposition;
 
 			// lightDirection
