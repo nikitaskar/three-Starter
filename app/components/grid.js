@@ -32,10 +32,10 @@ class Grid {
         let scaleIterator = 0;
 
         let count = -1;
-        for ( let i = 0; i < 51; i++) {
+        for ( let i = 0; i < 101; i++) {
             
             
-            for (let j = 0;j<51; j++) {
+            for (let j = 0;j<101; j++) {
                 count++
                 
                 if(count%2 == 0) {
@@ -51,12 +51,12 @@ class Grid {
                 }
 
                 if(count%2 == 0) {
-                    translation[translationIterator++] = -((Math.sin(Math.PI/3)*this.sideLength)*i)-(-this.pos.x-this.blueprint[0])-((Math.sin(Math.PI/3)*this.sideLength)*51)-(((this.pos.x*2)-(Math.sin(Math.PI/3)*this.sideLength)*51)/2)+(Math.sin(Math.PI/3)*this.sideLength)*51-((Math.sin(Math.PI/3)*this.sideLength))
-                    translation[translationIterator++] = -this.sideLength/2*j-((-this.pos.y*2)-(this.sideLength/2)*51)/2
+                    translation[translationIterator++] = -((Math.sin(Math.PI/3)*this.sideLength)*i)-(-this.pos.x-this.blueprint[0])-((Math.sin(Math.PI/3)*this.sideLength)*101)-(((this.pos.x*2)-(Math.sin(Math.PI/3)*this.sideLength)*101)/2)+(Math.sin(Math.PI/3)*this.sideLength)*101-((Math.sin(Math.PI/3)*this.sideLength))
+                    translation[translationIterator++] = -this.sideLength/2*j-((-this.pos.y*2)-(this.sideLength/2)*101)/2
                     translation[translationIterator++] = 0
                 } else {
-                    translation[translationIterator++] = -((Math.sin(Math.PI/3)*this.sideLength)*i)+(-this.pos.x-this.blueprint[0])+((Math.sin(Math.PI/3)*this.sideLength)*51)+(((this.pos.x*2)-(Math.sin(Math.PI/3)*this.sideLength)*51)/2)
-                    translation[translationIterator++] = -this.sideLength/2*j-((-this.pos.y*2)-(this.sideLength/2)*51)/2
+                    translation[translationIterator++] = -((Math.sin(Math.PI/3)*this.sideLength)*i)+(-this.pos.x-this.blueprint[0])+((Math.sin(Math.PI/3)*this.sideLength)*101)+(((this.pos.x*2)-(Math.sin(Math.PI/3)*this.sideLength)*101)/2)
+                    translation[translationIterator++] = -this.sideLength/2*j-((-this.pos.y*2)-(this.sideLength/2)*101)/2
                     translation[translationIterator++] = 0
                 }                            
             }       
@@ -96,6 +96,7 @@ class Grid {
         )
 
         this.grid = new THREE.Mesh(this.instancedGeo, material)
+        this.grid.scale.set(1,1,1)
         this.scene.add(this.grid)
     }
 }

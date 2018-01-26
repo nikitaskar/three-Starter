@@ -13,8 +13,10 @@ class createApp {
 		this.winWidth = window.innerWidth
 		this.winHeight = window.innerHeight
 		this.winRatio = this.winWidth/this.winHeight
-		this.camera = new THREE.PerspectiveCamera( 75,this.winRatio, 0.005, 1000 )
-		this.camera2 = new THREE.PerspectiveCamera( 75,this.winRatio, 0.005, 1000 )
+		this.camera = new THREE.PerspectiveCamera( 50,this.winRatio, 0.005, 1000 )
+		this.camera2 = new THREE.PerspectiveCamera( 50,this.winRatio, 0.005, 1000 )
+		this.camera.setFocalLength(50)
+		this.camera2.setFocalLength(50)
 		this.camera.position.z = 1
 		this.camera2.position.z = 10
 		this.target = new THREE.Vector3()
@@ -23,7 +25,7 @@ class createApp {
 
 		this.controls = orbitControls({
 			position : [0,0,0],
-			distance:0.002,
+			distance:0.0041,
 			zoom: true,
 			zoomSpeed: 0.000007,
 			rotateSpeed: 0.007,
@@ -40,17 +42,17 @@ class createApp {
 
 		this.rawCoords = [
 			{
-				x:this.winWidth/51,
+				x:this.winWidth/101,
 				y:0,
 			},
 
 			{	
-				x:Math.cos(2*Math.PI/3)*this.winWidth/51,
-				y:Math.sin(2*Math.PI/3)*this.winWidth/51
+				x:Math.cos(2*Math.PI/3)*this.winWidth/101,
+				y:Math.sin(2*Math.PI/3)*this.winWidth/101
 			},
 			{	
-				x:Math.cos((2*Math.PI/3)*2)*this.winWidth/51,
-				y:Math.sin((2*Math.PI/3)*2)*this.winWidth/51
+				x:Math.cos((2*Math.PI/3)*2)*this.winWidth/101,
+				y:Math.sin((2*Math.PI/3)*2)*this.winWidth/101
 			},
 		]
 
@@ -77,7 +79,7 @@ class createApp {
 			this.treatedCoords.push(this.newPos.x, this.newPos.y, this.newPos.z)
 
 		}
-		this.grid = new Grid({count: 2601, scene: this.scene, coords:this.treatedCoords, screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera)})
+		this.grid = new Grid({count: 10201, scene: this.scene, coords:this.treatedCoords, screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera)})
 
 	}
 

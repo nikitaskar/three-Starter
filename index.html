@@ -137,7 +137,11 @@
 			varying vec2 vUv;
 			varying float vRank;
 			varying vec4 color;
+			varying vec3 unupdatePos;
+			varying vec3 lightDiff;
+			varying vec3 vLight;
 			uniform vec2 u_mouse;
+			
 		void main() {
 			vec3 pos = position;
 			vRank = rank;
@@ -145,26 +149,24 @@
 			
 			
 			
-			vec3 tPos = transform(pos, translation, rotation, scale);	
-			tPos.z = tPos.z + snoise(pos*10000.+ u_time/2000.)/1000.;
+			vec3 tPos = transform(pos, translation, rotation, scale);
+			tPos.z = tPos.z+0.005+snoise(tPos*10000. + u_time/600.)/1000.;
 			gl_Position  = projectionMatrix * modelViewMatrix * vec4(tPos, 1.);
-			vPos = tPos;		
+				
 
 			// Position de ta lumière 
-			vec3 lightposition = vec3(10000.*u_mouse.x, 10000.*u_mouse.y, 10.);
+			vec3 lightposition = vec3(u_mouse.x*1000., u_mouse.y*1000.,0.00501	);
+			vLight = lightposition;
 
-
-			// Vecteur différence
-			vec3 lightDiff = lightposition - abs(normalize(tPos));
-
+			// lightDirection
+			lightDiff = normalize(lightposition -tPos);
+		
 			// Plus le vecteur est grand moins la lumière est importante
-			float distanceFactor = 1. - min(1., length(lightDiff)/40000.);
-
+			
+			vPos = tPos;	
 			// Produit vectorielle de la position et la source de lumière pour la réflection
-			float intensity = dot( tPos, lightDiff);
+			
 
-
-			 color = vec4(intensity*distanceFactor, intensity*distanceFactor, intensity*distanceFactor, 1.);
 		}
 	</script>
 	<script id="fragmentShader" type="x-shader/x-fragment">
@@ -176,14 +178,18 @@
 		uniform vec2 u_mouse;
 		varying float vRank;
 		varying vec3 vPos;
-varying vec4 color;
+		varying vec3 lightDiff;
+		varying vec4 color;
+		varying vec3 vLight;
 		void main() {
 			vec2 st = gl_FragCoord.xy/u_resolution.xy;
 			vec3 fdx = dFdx( vPos );
 				vec3 fdy = dFdy( vPos );
 				vec3 normal = normalize( cross( fdx, fdy ) );
-				float diffuse = dot( normal, vec3( u_mouse.x, u_mouse.y, 0.06 ) );
-				gl_FragColor = color/10.*diffuse*100.;
+				float distanceFactor = 1.-distance(vPos*1000.,vLight);
+				float nDotL = dot(lightDiff, normal);
+				float diffuse = dot( normal, vec3( 0., 0., 0.5	) );
+				gl_FragColor = vec4(distanceFactor*diffuse);
 		}
 	</script>
 	<script src="bundle.js"></script>
