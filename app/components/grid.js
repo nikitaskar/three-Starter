@@ -53,11 +53,11 @@ class Grid {
                 if(count%2 == 0) {
                     translation[translationIterator++] = -((Math.sin(Math.PI/3)*this.sideLength)*i)-(-this.pos.x-this.blueprint[0])-((Math.sin(Math.PI/3)*this.sideLength)*101)-(((this.pos.x*2)-(Math.sin(Math.PI/3)*this.sideLength)*101)/2)+(Math.sin(Math.PI/3)*this.sideLength)*101-((Math.sin(Math.PI/3)*this.sideLength))
                     translation[translationIterator++] = -this.sideLength/2*j-((-this.pos.y*2)-(this.sideLength/2)*101)/2
-                    translation[translationIterator++] = Math.random()*0.01
+                    translation[translationIterator++] = 0.005+Math.random()*0.0004
                 } else {
                     translation[translationIterator++] = -((Math.sin(Math.PI/3)*this.sideLength)*i)+(-this.pos.x-this.blueprint[0])+((Math.sin(Math.PI/3)*this.sideLength)*101)+(((this.pos.x*2)-(Math.sin(Math.PI/3)*this.sideLength)*101)/2)
                     translation[translationIterator++] = -this.sideLength/2*j-((-this.pos.y*2)-(this.sideLength/2)*101)/2
-                    translation[translationIterator++] = Math.random()*0.01
+                    translation[translationIterator++] = 0.005+Math.random()*0.0004
                 }                            
             }       
         }

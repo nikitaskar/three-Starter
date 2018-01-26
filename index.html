@@ -152,13 +152,13 @@
 			
 			
 			vec3 tPos = transform(pos, translation, rotation, scale);
-			tPos.z = 0.;
-			//tPos.z = tPos.z+snoise(tPos*10000. + u_time/600.)/2000.;
+			//tPos.z = 0.;
+			tPos.z = tPos.z+snoise(tPos*10000. + u_time/600.)/2000.;
 			gl_Position  = projectionMatrix * modelViewMatrix * vec4(tPos, 1.);
 				
 
 			// Position de ta lumière 
-			vec3 lightposition = vec3(u_mouse.x*1.5, u_mouse.y*1.4, 0.0000298);
+			vec3 lightposition = vec3(u_mouse.x*1.2, u_mouse.y*1.2, 0.0000998);
 			vLight = lightposition;
 
 			// lightDirection
@@ -189,10 +189,10 @@
 			vec3 fdx = dFdx( vPos );
 				vec3 fdy = dFdy( vPos );
 				vec3 normal = normalize( cross( fdx, fdy ) );
-				float distanceFactor = distance(vPos*1000.,vLight);
+				float distanceFactor = distance(vPos*5000.,vLight);
 				float nDotL = dot(lightDiff, normal);
-				float diffuse = 1.-dot( normal, vec3( 0., 0., 0.5	) );
-				gl_FragColor = vec4(nDotL*distanceFactor);
+				float diffuse = dot( normal, vec3( 0., 0., .5	) );
+				gl_FragColor = vec4(vec3(nDotL*distanceFactor*diffuse)*vec3(0.48,0.22,.98),1.);
 		}
 	</script>
 	<script src="bundle.js"></script>
