@@ -7,6 +7,7 @@ import meshLine from 'three.meshline'
 import gsap from 'gsap'
 
 import Grid from './components/grid.js'
+import SecondGrid from './components/grid2.js'
 
 class createApp {
 	constructor(opt) {
@@ -20,7 +21,6 @@ class createApp {
 		this.camera.position.z = 1
 		this.camera2.position.z = 10
 		this.target = new THREE.Vector3()
-		console.log( )
 		this.scene = new THREE.Scene();
 
 		this.controls = orbitControls({
@@ -56,6 +56,37 @@ class createApp {
 			},
 		]
 
+		this.rawCoords2 = [
+			{
+				x:-this.winWidth/10,
+				y:0,
+			},
+
+
+			{	
+				x:-	Math.cos(-2*Math.PI/3)*this.winWidth/10,
+				y:-	Math.sin(-2*Math.PI/3)*this.winWidth/10
+			},
+			{	
+				x:-	Math.cos((-2*Math.PI/3)*2)*this.winWidth/10,
+				y:-	Math.sin((-2*Math.PI/3)*2)*this.winWidth/10
+			},
+
+
+			{	
+				x:-	Math.cos(-2*Math.PI/3)*this.winWidth/10,
+				y:-	Math.sin(-2*Math.PI/3)*this.winWidth/10
+			},
+			{
+				x:2*this.winWidth/10,
+				y:0,
+			},
+			{	
+				x:-	Math.cos((-2*Math.PI/3)*2)*this.winWidth/10,
+				y:-	Math.sin((-2*Math.PI/3)*2)*this.winWidth/10
+			},
+		]
+
 		// let geo = new THREE.PlaneGeometry(10,10,120,120);
 		// let mat = new THREE.MeshBasicMaterial({color:"#ffffff",wireframe:true})
 
@@ -77,17 +108,16 @@ class createApp {
 	}
 
 	initCoords() {
-		for (let i = 0; i < this.rawCoords.length; i++) {
-			console.log(this.rawCoords)
-			let treatedCoordsX = ((this.rawCoords[i].x)/this.winWidth)*2-1
-			let treatedCoordsY = -((this.rawCoords[i].y)/this.winHeight)*2+1	
+		for (let i = 0; i < this.rawCoords2.length; i++) {
+			let treatedCoordsX = ((this.rawCoords2[i].x)/this.winWidth)*2-1
+			let treatedCoordsY = -((this.rawCoords2[i].y)/this.winHeight)*2+1	
 			
 			this.newPos = new THREE.Vector3(treatedCoordsX, treatedCoordsY,-1).unproject(this.camera)
-			console.log(new THREE.Vector3(1, -1,-1).unproject(this.camera))
 			this.treatedCoords.push(this.newPos.x, this.newPos.y, this.newPos.z)
 
 		}
-		this.grid = new Grid({count: 10201, scene: this.scene, coords:this.treatedCoords, screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera)})
+		this.grid2 = new SecondGrid({count:60, scene: this.scene, coords: this.treatedCoords, })
+		//this.grid = new Grid({count: 10201, scene: this.scene, coords:this.treatedCoords, screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera)})
 
 	}
 
@@ -117,11 +147,12 @@ class createApp {
 		this.camera2.up.fromArray(this.controls.up);
 		this.camera2.lookAt(this.target);
 		this.time += 1
-		this.grid.grid.material.uniforms.u_time.value = this.time
+		// this.grid.grid.material.uniforms.u_time.value = this.time
+		this.grid2.grid.material.uniforms.u_time.value = this.time
 			
-		this.mousePos = new THREE.Vector3(this.mouseX, this.mouseY,-1).unproject(this.camera)
-		this.grid.grid.material.uniforms.u_mouse.value.x = this.mousePos.x
-		this.grid.grid.material.uniforms.u_mouse.value.y = this.mousePos.y
+		// this.mousePos = new THREE.Vector3(this.mouseX, this.mouseY,-1).unproject(this.camera)
+		// this.grid.grid.material.uniforms.u_mouse.value.x = this.mousePos.x
+		// this.grid.grid.material.uniforms.u_mouse.value.y = this.mousePos.y
 		
 
 		//this.grid.grid.material.uniforms.u_time = this.time
