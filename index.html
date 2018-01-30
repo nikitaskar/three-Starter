@@ -17,9 +17,9 @@
 	</style>
 </head>
 <body>
-	<video id="video" autoplay loop webkit-playsinline style="display:none">
+	<!-- <video id="video" autoplay loop webkit-playsinline style="display:none">
 		<source src="sintel.ogv" type='video/ogg; codecs="theora, vorbis"'>
-	</video>
+	</video> -->
 
 	<script id="vertexShader" type="x-shader/x-vertex">
 		//blue print attribute position
@@ -207,7 +207,7 @@
 		#extension GL_OES_standard_derivatives : enable
 		precision highp float;
 		varying vec3 vPos;
-		uniform sampler2D texture;
+		uniform sampler2D envmap;
 		varying vec2 vUv;
 
 
@@ -307,6 +307,8 @@
 
 		uniform mat4 modelViewMatrix;
 		uniform mat3 normalMatrix;
+		uniform sampler2D texture;
+		uniform float u_time;
 		void main() {
 			vec3 fdx = dFdx( vPos );
 			vec3 fdy = dFdy( vPos );
@@ -322,9 +324,10 @@
 			  pow( r.z + 1., 2. )
 			);
 			vec2 vN = r.xy / m + .5;
-			float diffuse = dot( normal, vec3( 0., 0.,.2	) );
-			vec3 base = texture2D( texture, vN ).rgb;
-			gl_FragColor = vec4(base,1.);
+			float diffuse = dot( normal, vec3( 0., 0.,10.	) );
+			vec3 base = texture2D( envmap, vN ).rgb;
+			vec3 text = texture2D(texture, vUv).rgb;
+			gl_FragColor = vec4(base*diffuse*vec3(0.48,0.22,.98)*snoise(vPos*500.+u_time/600.),1.);
 		}
 	</script>
 	<script id="vertShader" type="x-shader/x-vertex">

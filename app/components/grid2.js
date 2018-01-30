@@ -6,7 +6,7 @@ class SecondGrid {
         this.scene = opt.scene;
         this.coords = opt.coords;
         this.count = opt.count
-        console.log('hello')
+        this.screenRatio = opt.screenRatio;
 
         this.createBlueprint()
         this.instanceBlueprint()
@@ -39,26 +39,24 @@ class SecondGrid {
         this.rank = -1;
 
 
-        let uvScale = new THREE.Vector2(1 / 6, 1 / 5);
+        let uvScale = new THREE.Vector2(1 / 60, 1 / 60);
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 120; i++) {
 
-            for (let j = 0; j < 6; j++) {
-                this.rank++
-                
-               
+            for (let j = 0; j < 60; j++) {
+                this.rank++            
           
                 uvScales[uvScalesIterator++] = uvScale.x;
                 uvScales[uvScalesIterator++] = uvScale.y;
                 if(i %2 ==0) {
-                    translation[ translationIterator++ ] = 2*((Math.sin(Math.PI/3)*this.sideLength)*j)
-                    translation[ translationIterator++ ] = i*this.sideLength/2
+                    translation[ translationIterator++ ] = 2*((Math.sin(Math.PI/3)*this.sideLength)*j)  - Math.abs(((this.screenRatio.x*2)-2*((Math.sin(Math.PI/3)*this.sideLength))*60))/2
+                    translation[ translationIterator++ ] = i*this.sideLength/2  - this.sideLength*60 + Math.abs(((-this.screenRatio.y*2)-this.sideLength*60))/2
                     translation[ translationIterator++ ] = 0                
                     uvOffset[uvOffsetIterator++] =  j * uvScale.x;
                     uvOffset[uvOffsetIterator++] =  0.36*i * uvScale.y;
                 } else {
-                    translation[ translationIterator++ ] = 2*((Math.sin(Math.PI/3)*this.sideLength)*j)+(Math.sin(Math.PI/3)*this.sideLength)
-                    translation[ translationIterator++ ] = i*this.sideLength/2
+                    translation[ translationIterator++ ] = 2*((Math.sin(Math.PI/3)*this.sideLength)*j)+(Math.sin(Math.PI/3)*this.sideLength) - Math.abs(((this.screenRatio.x*2)-2*((Math.sin(Math.PI/3)*this.sideLength))*60))/2
+                    translation[ translationIterator++ ] = i*this.sideLength/2  - this.sideLength*60 + Math.abs(((-this.screenRatio.y*2)-this.sideLength*60))/2
                     translation[ translationIterator++ ] = 0    
                     uvOffset[uvOffsetIterator++] =  (j * uvScale.x)+(0.5/6) ;
                     uvOffset[uvOffsetIterator++] =  0.36*i * uvScale.y;      
@@ -96,7 +94,9 @@ class SecondGrid {
                         type:'f',
                         value:1.0,
                     },
-                    texture: { type: "t", value: null }
+                    envmap: { type: "t", value: null },
+                    texture: { type: "t", value: null },
+
                 },
 
                 vertexShader: document.getElementById('vertShader').innerHTML,
@@ -108,7 +108,13 @@ class SecondGrid {
 
         var tl = new THREE.TextureLoader();
         tl.setCrossOrigin( "Anonymous" );
-        tl.load("../qSmNE.jpg", function( t ) {
+        tl.load("../12719.jpg", function( t ) {
+          material.uniforms.envmap.value = t;
+        });
+
+        tl = new THREE.TextureLoader();
+        tl.setCrossOrigin( "Anonymous" );
+        tl.load("../grunge1.jpg", function( t ) {
           material.uniforms.texture.value = t;
         });
 

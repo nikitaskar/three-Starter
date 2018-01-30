@@ -58,32 +58,32 @@ class createApp {
 
 		this.rawCoords2 = [
 			{
-				x:-this.winWidth/10,
+				x:-this.winWidth/60,
 				y:0,
 			},
 
 
 			{	
-				x:-	Math.cos(-2*Math.PI/3)*this.winWidth/10,
-				y:-	Math.sin(-2*Math.PI/3)*this.winWidth/10
+				x:-	Math.cos(-2*Math.PI/3)*this.winWidth/60,
+				y:-	Math.sin(-2*Math.PI/3)*this.winWidth/60
 			},
 			{	
-				x:-	Math.cos((-2*Math.PI/3)*2)*this.winWidth/10,
-				y:-	Math.sin((-2*Math.PI/3)*2)*this.winWidth/10
+				x:-	Math.cos((-2*Math.PI/3)*2)*this.winWidth/60,
+				y:-	Math.sin((-2*Math.PI/3)*2)*this.winWidth/60
 			},
 
 
 			{	
-				x:-	Math.cos(-2*Math.PI/3)*this.winWidth/10,
-				y:-	Math.sin(-2*Math.PI/3)*this.winWidth/10
+				x:-	Math.cos(-2*Math.PI/3)*this.winWidth/60,
+				y:-	Math.sin(-2*Math.PI/3)*this.winWidth/60
 			},
 			{
-				x:2*this.winWidth/10,
+				x:2*this.winWidth/60,
 				y:0,
 			},
 			{	
-				x:-	Math.cos((-2*Math.PI/3)*2)*this.winWidth/10,
-				y:-	Math.sin((-2*Math.PI/3)*2)*this.winWidth/10
+				x:-	Math.cos((-2*Math.PI/3)*2)*this.winWidth/60,
+				y:-	Math.sin((-2*Math.PI/3)*2)*this.winWidth/60
 			},
 		]
 
@@ -116,7 +116,7 @@ class createApp {
 			this.treatedCoords.push(this.newPos.x, this.newPos.y, this.newPos.z)
 
 		}
-		this.grid2 = new SecondGrid({count:60, scene: this.scene, coords: this.treatedCoords, })
+		this.grid2 = new SecondGrid({count:7200, scene: this.scene, coords: this.treatedCoords,  screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera) })
 		//this.grid = new Grid({count: 10201, scene: this.scene, coords:this.treatedCoords, screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera)})
 
 	}
