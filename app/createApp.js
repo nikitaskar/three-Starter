@@ -25,7 +25,7 @@ class createApp {
 
 		this.controls = orbitControls({
 			position : [0,0,0],
-			distance:0.0007,
+			distance:0.0146,
 			zoom: true,
 			zoomSpeed: 0.000007,
 			rotateSpeed: 0.007,
@@ -56,34 +56,36 @@ class createApp {
 			},
 		]
 
+		this.squareRatio = 30;
+
 		this.rawCoords2 = [
 			{
-				x:-this.winWidth/60,
+				x:-this.winWidth/this.squareRatio,
 				y:0,
 			},
 
 
 			{	
-				x:-	Math.cos(-2*Math.PI/3)*this.winWidth/60,
-				y:-	Math.sin(-2*Math.PI/3)*this.winWidth/60
+				x:-	Math.cos(-2*Math.PI/3)*this.winWidth/this.squareRatio,
+				y:-	Math.sin(-2*Math.PI/3)*this.winWidth/this.squareRatio
 			},
 			{	
-				x:-	Math.cos((-2*Math.PI/3)*2)*this.winWidth/60,
-				y:-	Math.sin((-2*Math.PI/3)*2)*this.winWidth/60
+				x:-	Math.cos((-2*Math.PI/3)*2)*this.winWidth/this.squareRatio,
+				y:-	Math.sin((-2*Math.PI/3)*2)*this.winWidth/this.squareRatio
 			},
 
 
 			{	
-				x:-	Math.cos(-2*Math.PI/3)*this.winWidth/60,
-				y:-	Math.sin(-2*Math.PI/3)*this.winWidth/60
+				x:-	Math.cos(-2*Math.PI/3)*this.winWidth/this.squareRatio,
+				y:-	Math.sin(-2*Math.PI/3)*this.winWidth/this.squareRatio
 			},
 			{
-				x:2*this.winWidth/60,
+				x:2*this.winWidth/this.squareRatio,
 				y:0,
 			},
 			{	
-				x:-	Math.cos((-2*Math.PI/3)*2)*this.winWidth/60,
-				y:-	Math.sin((-2*Math.PI/3)*2)*this.winWidth/60
+				x:-	Math.cos((-2*Math.PI/3)*2)*this.winWidth/this.squareRatio,
+				y:-	Math.sin((-2*Math.PI/3)*2)*this.winWidth/this.squareRatio
 			},
 		]
 
@@ -116,7 +118,7 @@ class createApp {
 			this.treatedCoords.push(this.newPos.x, this.newPos.y, this.newPos.z)
 
 		}
-		this.grid2 = new SecondGrid({count:7200, scene: this.scene, coords: this.treatedCoords,  screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera) })
+		this.grid2 = new SecondGrid({count:this.squareRatio*2*this.squareRatio, scene: this.scene, coords: this.treatedCoords,  screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera), squareRatio: this.squareRatio })
 		//this.grid = new Grid({count: 10201, scene: this.scene, coords:this.treatedCoords, screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera)})
 
 	}
@@ -150,10 +152,9 @@ class createApp {
 		// this.grid.grid.material.uniforms.u_time.value = this.time
 		this.grid2.grid.material.uniforms.u_time.value = this.time
 			
-		// this.mousePos = new THREE.Vector3(this.mouseX, this.mouseY,-1).unproject(this.camera)
-		// this.grid.grid.material.uniforms.u_mouse.value.x = this.mousePos.x
-		// this.grid.grid.material.uniforms.u_mouse.value.y = this.mousePos.y
-		
+		this.mousePos = new THREE.Vector3(this.mouseX, this.mouseY,-1).unproject(this.camera)
+		this.grid2.grid.material.uniforms.u_mouse.value.x = this.mousePos.x
+		this.grid2.grid.material.uniforms.u_mouse.value.y = this.mousePos.y
 
 		//this.grid.grid.material.uniforms.u_time = this.time
 		this.renderer.render(this.scene, this.camera2)
