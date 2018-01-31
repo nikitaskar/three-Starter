@@ -18,7 +18,7 @@ class createApp {
 		this.camera2 = new THREE.PerspectiveCamera( 50,this.winRatio, 0.005, 1000 )
 		this.camera.setFocalLength(50)
 		this.camera2.setFocalLength(50)
-		this.camera.position.z = 1
+		this.camera.position.z = 0.05
 		this.camera2.position.z = 10
 		this.target = new THREE.Vector3()
 		this.scene = new THREE.Scene();
@@ -28,10 +28,13 @@ class createApp {
 			distance:0.0146,
 			zoom: true,
 			zoomSpeed: 0.000007,
-			rotateSpeed: 0.007,
+			rotateSpeed: 0.0009,
 			damping: 0.05,
 		})
-
+		this.currentPos = {
+			x:0,
+			y:0,
+		}
 		this.renderer = new THREE.WebGLRenderer({antialias: true, alpha:true})
 		this.renderer.setSize(this.winWidth, this.winHeight)
 
@@ -56,7 +59,7 @@ class createApp {
 			},
 		]
 
-		this.squareRatio = 30;
+		this.squareRatio = 25;
 
 		this.rawCoords2 = [
 			{
@@ -103,6 +106,23 @@ class createApp {
 		this.light.position.set(0,0,0.6)
 		this.scene.add(this.light)
 
+		
+		this.composer = new EffectComposer(this.renderer)
+		this.composer.addPass(new RenderPass(this.scene, this.camera2))
+		this.postProcMaterial = new THREE.ShaderMaterial({
+			uniforms: {
+				'tDiffuse': { type: 't', value: null },
+				'opacity': { type: 'f', value: 1 },
+				'u_time': {type: 'f', value:0}
+			},
+			vertexShader: document.getElementById('ppVert').innerHTML,
+			fragmentShader: document.getElementById('ppFrag').innerHTML
+		})
+		// And draw to the screen 
+		this.copyPass = new ShaderPass(this.postProcMaterial)
+		this.copyPass.renderToScreen = true
+		this.composer.addPass(this.copyPass)
+
 		this.time = 0
 		this.initCoords()
 		this.animate()
@@ -143,21 +163,30 @@ class createApp {
 	}
 
 	animate() {
+		
 		requestAnimationFrame(this.animate.bind(this))
+
+	
 		this.controls.update();
 		this.camera2.position.fromArray(this.controls.position);
 		this.camera2.up.fromArray(this.controls.up);
 		this.camera2.lookAt(this.target);
-		this.time += 1
+		this.time += 1/16
 		// this.grid.grid.material.uniforms.u_time.value = this.time
 		this.grid2.grid.material.uniforms.u_time.value = this.time
-			
+		this.copyPass.material.uniforms.u_time.value = this.time
 		this.mousePos = new THREE.Vector3(this.mouseX, this.mouseY,-1).unproject(this.camera)
-		this.grid2.grid.material.uniforms.u_mouse.value.x = this.mousePos.x
-		this.grid2.grid.material.uniforms.u_mouse.value.y = this.mousePos.y
+		var distX = this.mousePos.x - this.currentPos.x;
+		var distY = this.mousePos.y - this.currentPos.y;
 
+		this.currentPos.x += distX/15;
+		this.currentPos.y += distY/15;
+
+		this.grid2.grid.material.uniforms.u_mouse.value.x = this.currentPos.x
+		this.grid2.grid.material.uniforms.u_mouse.value.y = this.currentPos.y
+
+		this.composer.render(this.scene, this.camera2)
 		//this.grid.grid.material.uniforms.u_time = this.time
-		this.renderer.render(this.scene, this.camera2)
 	}
 }
 

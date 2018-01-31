@@ -51,13 +51,13 @@ class SecondGrid {
                 if(i %2 ==0) {
                     translation[ translationIterator++ ] = 2*((Math.sin(Math.PI/3)*this.sideLength)*j)  - Math.abs(((this.screenRatio.x*2)-2*((Math.sin(Math.PI/3)*this.sideLength))*this.squareRatio))/2
                     translation[ translationIterator++ ] = i*this.sideLength/2  - this.sideLength*this.squareRatio + Math.abs(((-this.screenRatio.y*2)-this.sideLength*this.squareRatio))/2
-                    translation[ translationIterator++ ] = Math.random()*0.001+0.005           
+                    translation[ translationIterator++ ] = 0           
                     uvOffset[uvOffsetIterator++] =  j * uvScale.x;
                     uvOffset[uvOffsetIterator++] =  0.36*i * uvScale.y;
                 } else {
                     translation[ translationIterator++ ] = 2*((Math.sin(Math.PI/3)*this.sideLength)*j)+(Math.sin(Math.PI/3)*this.sideLength) - Math.abs(((this.screenRatio.x*2)-2*((Math.sin(Math.PI/3)*this.sideLength))*this.squareRatio))/2
                     translation[ translationIterator++ ] = i*this.sideLength/2  - this.sideLength*this.squareRatio + Math.abs(((-this.screenRatio.y*2)-this.sideLength*this.squareRatio))/2
-                    translation[ translationIterator++ ] = Math.random()*0.001+0.005
+                    translation[ translationIterator++ ] = 0
                     uvOffset[uvOffsetIterator++] =  (j * uvScale.x)+(0.5/this.squareRatio) ;
                     uvOffset[uvOffsetIterator++] =  0.36*i * uvScale.y;      
                 }
@@ -125,6 +125,16 @@ class SecondGrid {
           material.uniforms.texture.value = t;
         });
 
+
+
+        // let video = document.getElementById( 'video' );
+
+        // let texture = new THREE.VideoTexture( video );
+        // texture.minFilter = THREE.LinearFilter;
+        // texture.magFilter = THREE.LinearFilter;
+        // texture.format = THREE.RGBFormat;
+
+        // material.uniforms.texture.value = texture;
       
 
         this.grid = new THREE.Mesh(this.geometry, material)
