@@ -22,15 +22,28 @@ class createApp {
 		this.camera2.position.z = 10
 		this.target = new THREE.Vector3()
 		this.scene = new THREE.Scene();
-
-		this.controls = orbitControls({
-			position : [0,0,0],
-			distance:0.0146,
-			zoom: true,
-			zoomSpeed: 0.000007,
-			rotateSpeed: 0.0009,
-			damping: 0.05,
-		})
+		this.mobile = false;
+		if(!this.mobile) {
+			this.controls = orbitControls({
+				position : [0,0,0],
+				distance:0.0146,
+				zoom: true,
+				zoomSpeed: 0.000007,
+				rotateSpeed: 0.004,
+				damping: 0.05,
+			})
+		} else {
+			this.controls = orbitControls({
+				position : [0,0,0],
+				distance:0.0146,
+				zoom: false,
+				zoomSpeed: 0.000007,
+				rotate: false,
+				rotateSpeed: 0.003,
+				damping: 0.05,
+			})
+		}
+	
 		this.currentPos = {
 			x:0,
 			y:0,
@@ -42,6 +55,7 @@ class createApp {
 
 		window.addEventListener('resize', this.onResize.bind(this))
 		window.addEventListener('mousemove', this.onMouseMove.bind(this))
+		window.addEventListener('touchmove', this.onTouchMove.bind(this))
 
 		this.rawCoords = [
 			{
@@ -59,8 +73,9 @@ class createApp {
 			},
 		]
 
-		this.squareRatio = 25;
-
+		this.squareRatio = 17
+		this.count = Math.floor((Math.floor(this.squareRatio*2*1.38*1.19*this.squareRatio))/this.squareRatio)*this.squareRatio
+	
 		this.rawCoords2 = [
 			{
 				x:-this.winWidth/this.squareRatio,
@@ -113,7 +128,14 @@ class createApp {
 			uniforms: {
 				'tDiffuse': { type: 't', value: null },
 				'opacity': { type: 'f', value: 1 },
-				'u_time': {type: 'f', value:0}
+				'u_time': {type: 'f', value:0},
+				'u_resolution': {
+					type: 'v2',
+					value : {
+						x: this.winWidth,
+						y:this.winHeight,
+					}
+				},
 			},
 			vertexShader: document.getElementById('ppVert').innerHTML,
 			fragmentShader: document.getElementById('ppFrag').innerHTML
@@ -138,7 +160,7 @@ class createApp {
 			this.treatedCoords.push(this.newPos.x, this.newPos.y, this.newPos.z)
 
 		}
-		this.grid2 = new SecondGrid({count:this.squareRatio*2*this.squareRatio, scene: this.scene, coords: this.treatedCoords,  screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera), squareRatio: this.squareRatio })
+		this.grid2 = new SecondGrid({count:this.count, scene: this.scene, coords: this.treatedCoords,  screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera), squareRatio: this.squareRatio })
 		//this.grid = new Grid({count: 10201, scene: this.scene, coords:this.treatedCoords, screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera)})
 
 	}
@@ -147,6 +169,16 @@ class createApp {
 	onMouseMove(e) {
 		let mouseX = e.clientX
 		let mouseY = e.clientY
+		
+		this.mouseX = ((mouseX)/this.winWidth)*2-1
+		this.mouseY = -((mouseY)/this.winHeight)*2+1	
+	
+	}
+
+	onTouchMove(e) {
+		console.log(e)
+		let mouseX = e.changedTouches[0].screenX
+		let mouseY = e.changedTouches[0].screenY
 		
 		this.mouseX = ((mouseX)/this.winWidth)*2-1
 		this.mouseY = -((mouseY)/this.winHeight)*2+1	
