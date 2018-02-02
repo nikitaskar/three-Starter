@@ -118,6 +118,7 @@ class SecondGrid {
                 fragmentShader: document.getElementById('fragShader').innerHTML,
                 side: THREE.DoubleSide,
                 wireframe: false,              
+                transparent: true,
             }
         )
 
@@ -136,7 +137,7 @@ class SecondGrid {
 
 
         let video = document.getElementById( 'video' );
-
+        video.play()
         let texture = new THREE.VideoTexture( video );
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
