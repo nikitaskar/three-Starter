@@ -54,9 +54,9 @@ class createApp {
 		document.body.appendChild(this.renderer.domElement)
 
 		window.addEventListener('resize', this.onResize.bind(this))
-		window.addEventListener('mousemove', this.onMouseMove.bind(this))
-		window.addEventListener('touchmove', this.onTouchMove.bind(this))
-		// window.addEventListener('click', this.onMouseClick.bind(this))
+		// window.addEventListener('mousemove', this.onMouseMove.bind(this))
+		// window.addEventListener('touchmove', this.onTouchMove.bind(this))
+		 window.addEventListener('click', this.onMouseClick.bind(this))
 	
 		// let video = document.getElementById( 'video' );
 
@@ -155,9 +155,15 @@ class createApp {
 		// this.scene.add(meshh)
 		// meshh.rotation.z = Math.PI/4
 		
-		// this.mouse = {
-		// 	x : -this.winWidth/2,
-		// }
+		this.mouse = {
+			x : -this.winWidth/2,
+			y:this.winHeight/2,
+		}
+
+		this.anim = {
+			x: this.winWidth/2,
+			y:this.winHeight/2,
+		}
 
 		this.treatedCoords = []
 		
@@ -179,6 +185,7 @@ class createApp {
 			vertexShader: document.getElementById('ppVert').innerHTML,
 			fragmentShader: document.getElementById('ppFrag').innerHTML
 		})
+
 		// And draw to the screen 
 		this.copyPass = new ShaderPass(this.postProcMaterial)
 		this.copyPass.renderToScreen = true
@@ -214,20 +221,13 @@ class createApp {
 	
 	}
 
-	// onMouseClick(e) {
-	// 	TweenMax.to(this.mouse, 5., {x: this.winWidth*1.5, ease: Power4.easeOut})
-	// 	TweenMax.to(this.videoMesh.material.uniforms.ratio, 1., {value: 1., ease: Power2.easeIn, })
+	onMouseClick(e) {
+		TweenMax.to(this.mouse, 1.5, {x: this.winWidth*1.5, ease: SlowMo.ease.config(0.5, 0.5, false)})
+		TweenMax.to(this.anim, 1.5, {x: this.winWidth*1.5, ease: Power2.easeIn})
 		
-	// 	let video = document.getElementById( 'video2' );
-
-	// 	let texture = new THREE.VideoTexture( video );
-    //     texture.minFilter = THREE.LinearFilter;
-    //     texture.magFilter = THREE.LinearFilter;
-	// 	texture.format = THREE.RGBFormat;
-		
-	// 	this.videoMesh.material.uniforms.texture2.value = texture;
-	// 	this.grid2.grid.material.uniforms.texture.value = texture;
-	// }
+		let video = document.getElementById( 'video' );
+        video.play()
+	}
 
 
 	onTouchMove(e) {
@@ -246,6 +246,8 @@ class createApp {
 		this.renderer.setSize(this.winWidth, this.winHeight)
 	}
 
+
+	
 	animate() {
 		
 		requestAnimationFrame(this.animate.bind(this))
@@ -261,19 +263,29 @@ class createApp {
 
 		this.copyPass.material.uniforms.u_time.value = this.time
 
+		this.mouseX = ((this.mouse.x)/this.winWidth)*2-1
+		this.mouseY = -((this.mouse.y)/this.winHeight)*2+1	
+
+		this.animX = ((this.anim.x)/this.winWidth)*2-1
+		this.animY = -((this.anim.y)/this.winHeight)*2+1	
 
 		this.mousePos = new THREE.Vector3(this.mouseX, this.mouseY,-1).unproject(this.camera)
-		var distX = this.mousePos.x - this.currentPos.x;
-		var distY = this.mousePos.y - this.currentPos.y;
+		this.animPos = new THREE.Vector3(this.animX, this.animY,-1).unproject(this.camera)
+		// var distX = this.mousePos.x - this.currentPos.x;
+		// var distY = this.mousePos.y - this.currentPos.y;
 
-		this.currentPos.x += distX/15;
-		this.currentPos.y += distY/15;
+		// this.currentPos.x += distX/15;
+		// this.currentPos.y += distY/15;
 
-		// this.currentPos.x = this.mousePos.x;
-		// this.currentPos.y = this.mousePos.y;
-
+		this.currentPos.x = this.mousePos.x;
+		this.currentPos.y = this.mousePos.y;
+		
 		this.grid2.grid.material.uniforms.u_mouse.value.x = this.currentPos.x
 		this.grid2.grid.material.uniforms.u_mouse.value.y = this.currentPos.y
+	
+		
+		this.grid2.grid.material.uniforms.u_anim.value.x = this.animPos.x
+		this.grid2.grid.material.uniforms.u_anim.value.y = this.animPos.y
 
 		this.composer.render(this.scene, this.camera2)
 		//this.grid.grid.material.uniforms.u_time = this.time

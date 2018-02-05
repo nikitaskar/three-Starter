@@ -109,8 +109,17 @@ class SecondGrid {
                             y:0,
                         },
                     },
+                    u_anim: {
+                        type:'v2',
+                        value: {
+                            x:0,
+                            y:0,  
+                        }
+                       
+                    },
                     envmap: { type: "t", value: null },
                     texture: { type: "t", value: null },
+                    texture2: {type:"t", value:null}
 
                 },
 
@@ -124,7 +133,7 @@ class SecondGrid {
 
         var tl = new THREE.TextureLoader();
         tl.setCrossOrigin( "Anonymous" );
-        tl.load("../quartz.jpg", function( t ) {
+        tl.load("../reflet.jpg", function( t ) {
           material.uniforms.envmap.value = t;
         });
 
@@ -133,17 +142,31 @@ class SecondGrid {
         // tl.load("../sand.jpg", function( t ) {
         //   material.uniforms.texture.value = t;
         // });
+        // tl = new THREE.TextureLoader();
+        // tl.setCrossOrigin( "Anonymous" );
+        // tl.load("../fish.jpg", function( t ) {
+        //   material.uniforms.texture2.value = t;
+        // });
 
 
 
         let video = document.getElementById( 'video' );
-        video.play()
+       
         let texture = new THREE.VideoTexture( video );
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
         texture.format = THREE.RGBFormat;
 
         material.uniforms.texture.value = texture;
+
+        video = document.getElementById( 'video2' );
+        video.play()
+        texture = new THREE.VideoTexture( video );
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.format = THREE.RGBFormat;
+
+        material.uniforms.texture2.value = texture;
         
 
         this.grid = new THREE.Mesh(this.geometry, material)

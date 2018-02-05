@@ -17,11 +17,11 @@
 	</style>
 </head>
 <body>
-	<video id="video" autoplay loop webkit-playsinline style="display:none">
+	<video id="video" loop style="display:none">
 		<source src="gusto4.mp4" type='video/ogg; codecs="theora, vorbis"'>
 	</video>
-	<video id="video2" autoplay loop webkit-playsinline style="display:none">
-		<source src="gusto2.mp4" type='video/ogg; codecs="theora, vorbis"'>
+	<video id="video2" loop style="display:none">
+		<source src="Niki.mp4" type='video/ogg; codecs="theora, vorbis"'>
 	</video>
 	<script id="vertexShader" type="x-shader/x-vertex">
 		//blue print attribute position
@@ -216,8 +216,10 @@
 		uniform mat4 modelViewMatrix;
 		uniform mat3 normalMatrix;
 		uniform sampler2D texture;
+		uniform sampler2D texture2;
 		uniform float u_time;
 		uniform vec2 u_mouse;
+		uniform vec2 u_anim;
 		vec3 hardMix( vec3 s, vec3 d )
 		{
 			return floor(s + d);
@@ -268,21 +270,33 @@
 			  pow( r.z + 1., 2. )
 			);
 			vec2 vN = (r.xy / m + .5);
-			float diffuse = dot( normal, vec3( 0., 0.,1.5) );
-			float distanceFactor = distance(vLight,vPos*150.);
+			float diffuse = dot( normal, vec3( 0., 0.,3.) );
+			float distanceFactor = distance(vLight,vPos*160.);
 			float nDotL = dot(lightDirection, normal);
 
 			vec3 base = texture2D( envmap, vN ).rgb;
-			vec3 text = texture2D(texture, vUv).rgb;
+
+			vec3 col = vec3(0.);
+
+			if(vPos.x*160. > vLight.x) {
+				col = min(vec3(1.),vec3(distance((vPos.x*160.), vLight.x))*8.);
+			}
+
+			vec3 text = mix(texture2D(texture, vUv-clamp(vec2(-0.3),vLight.xy/8.,vec2(0.))).rgb, texture2D(texture2, vUv-min(vec2(0.2,0.),u_anim*160.)).rgb, col.x);
 			//text = (nDotL-distanceFactor)*diffuse*text
 			//text= text*sin(u_time);
 			
 			vec3 lights = vec3((nDotL-distanceFactor)*diffuse);
-			vec3 newCol = mix(base*1.5,text, 0.5);
+			vec3 newCol = mix(base*(1.- min(1.0,distance( vLight.xy, vPos.xy*250.)))*lights,text, 0.4);
 			float alpha = lights.x;
 	
-			gl_FragColor = vec4(base,1.);
-			//gl_FragColor = vec4((nDotL-diffuse));
+			
+			//gl_FragColor = vec4((nDotL-distanceFactor));
+			//gl_FragColor = vec4(vec3(1.- min(1.0,distance( vLight.xy, vPos.xy*250.))),1.);
+			
+			
+			gl_FragColor = vec4(newCol,1.);
+			//gl_FragColor = vec4(base, 1.);
 		}
 	</script>
 	<script id="vertShader" type="x-shader/x-vertex">
@@ -413,13 +427,13 @@
 
 		
 
-			vec3 lightposition = vec3(u_mouse.x*150.*3., u_mouse.y*150.*3., .15);
+			vec3 lightposition = vec3(u_mouse.x*160.*3., u_mouse.y*160.*3., .15);
 
-				pos.z = pos.z + snoise(pos*5000.)/((distance( lightposition.xy, pos.xy))*1000.);
-	
+			pos.z = pos.z + snoise(pos*5000.)/2000.;
+			pos.z = pos.z *(1.- min(1.0,distance( lightposition.xy, pos.xy*160.)));
 
 			vLight = lightposition;		
-			lightDirection = normalize(lightposition - pos*200.);
+			lightDirection = normalize(lightposition - pos*160.);
 			gl_Position = projectionMatrix * modelViewMatrix*vec4(pos, 1.);
 			vPos = pos;
 		}
@@ -547,7 +561,7 @@
 		void main() {
 			vec4 texel = texture2D( tDiffuse, vUv );
 			float time = u_time;
-			vec4 newCol = mix(texel,vec4((snoise(vPos*100000.+u_time/3.5)+1.)), .025);
+			vec4 newCol = mix(texel,vec4((snoise(vPos*100000.+u_time/3.5)+1.)), .03);
 			gl_FragColor = newCol;
 		}
 	</script>
