@@ -56,6 +56,7 @@ class createApp {
 		window.addEventListener('resize', this.onResize.bind(this))
 		window.addEventListener('mousemove', this.onMouseMove.bind(this))
 		window.addEventListener('touchmove', this.onTouchMove.bind(this))
+		window.addEventListener('click', this.onMouseClick.bind(this))
 
 		this.rawCoords = [
 			{
@@ -144,7 +145,7 @@ class createApp {
 		this.copyPass = new ShaderPass(this.postProcMaterial)
 		this.copyPass.renderToScreen = true
 		this.composer.addPass(this.copyPass)
-
+		
 		this.time = 0
 		this.initCoords()
 		this.animate()
@@ -183,6 +184,11 @@ class createApp {
 		this.mouseX = ((mouseX)/this.winWidth)*2-1
 		this.mouseY = -((mouseY)/this.winHeight)*2+1	
 	
+	}
+
+	onMouseClick() {
+		let grid = this.grid2
+		TweenMax.to(this.grid2.grid.material.uniforms.noiseOffset, 2., {value: grid.grid.material.uniforms.noiseOffset.value+0.15, ease: Power1.easeInOut, });
 	}
 
 	onResize() {

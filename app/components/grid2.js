@@ -38,7 +38,8 @@ class SecondGrid {
         var uvScalesIterator = 0;
         //and iterators for convenience :)
         var translationIterator = 0;
-        this.rank = -1;
+        var rankIterator = 0;
+        this.rank = new Float32Array( this.count );
 
 
         let uvScale = new THREE.Vector2(1 / this.squareRatio, 1 / (this.squareRatio*1.19));
@@ -47,12 +48,15 @@ class SecondGrid {
         this.yCount = this.count/this.squareRatio;
         console.log(this.yCount)
         this.xCount = this.squareRatio;
+        let rank = 0
         console.log(this.sideLength - (Math.sin(Math.PI/3)*this.sideLength))
         for (let i = 0; i < this.yCount; i++) {
 
             for (let j = 0; j < this.xCount; j++) {
-                this.rank++            
-          
+                
+
+                this.rank[rankIterator++] = rank++   
+                console.log(this.rank)
                 uvScales[uvScalesIterator++] = uvScale.x;
                 uvScales[uvScalesIterator++] = uvScale.y;
                 if(i %2 ==0) {
@@ -75,6 +79,7 @@ class SecondGrid {
             
         }
         this.geometry.addAttribute( 'translation', new THREE.InstancedBufferAttribute( translation, 3, 1 ) );
+        this.geometry.addAttribute( 'rank', new THREE.InstancedBufferAttribute( this.rank, 1, 1 ) );
         
   this.geometry.addAttribute(
     "uvOffset",
@@ -109,8 +114,13 @@ class SecondGrid {
                             y:0,
                         },
                     },
+                    noiseOffset: {
+                        type:"f",
+                        value: 0
+                    },
                     envmap: { type: "t", value: null },
                     texture: { type: "t", value: null },
+                    texture2: { type: "t", value: null },
 
                 },
 
@@ -123,7 +133,7 @@ class SecondGrid {
 
         var tl = new THREE.TextureLoader();
         tl.setCrossOrigin( "Anonymous" );
-        tl.load("../quartz.jpg", function( t ) {
+        tl.load("../refraction.jpg", function( t ) {
           material.uniforms.envmap.value = t;
         });
 
@@ -143,6 +153,15 @@ class SecondGrid {
         texture.format = THREE.RGBFormat;
 
         material.uniforms.texture.value = texture;
+
+        video = document.getElementById( 'video2' );
+
+        texture = new THREE.VideoTexture( video );
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.format = THREE.RGBFormat;
+
+        material.uniforms.texture2.value = texture;
         
 
         this.grid = new THREE.Mesh(this.geometry, material)

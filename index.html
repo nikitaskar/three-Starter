@@ -20,6 +20,9 @@
 	<video id="video" autoplay loop webkit-playsinline style="display:none">
 		<source src="gusto3.mp4" type='video/ogg; codecs="theora, vorbis"'>
 	</video>
+	<video id="video2" autoplay loop webkit-playsinline style="display:none">
+		<source src="gusto2.mp4" type='video/ogg; codecs="theora, vorbis"'>
+	</video>
 	<script id="vertexShader" type="x-shader/x-vertex">
 		//blue print attribute position
 		uniform mat4 modelViewMatrix;
@@ -212,7 +215,9 @@
 		varying vec3 lightDirection;
 		uniform mat4 modelViewMatrix;
 		uniform mat3 normalMatrix;
+		varying float vRank;
 		uniform sampler2D texture;
+		uniform sampler2D texture2;
 		uniform float u_time;
 		uniform vec2 u_mouse;
 		vec3 hardMix( vec3 s, vec3 d )
@@ -270,12 +275,18 @@
 			float nDotL = dot(lightDirection, normal);
 
 			vec3 base = texture2D( envmap, vN ).rgb;
-			vec3 text = texture2D(texture, vUv).rgb;
+			vec3 text = vec3(0.);
+
+			if(vRank > 500.) {
+				text = texture2D(texture, vUv).rgb;
+			} else {
+				text = texture2D(texture2, vUv).rgb;
+			}
 			//text = (nDotL-distanceFactor)*diffuse*text
 			//text= text*sin(u_time);
 			
-			vec3 newCol = mix(base,text, 0.5);
-
+			vec3 newCol = mix(base,text*1.5, 0.6);
+			//gl_FragColor = vec4(vRank/100.);
 			gl_FragColor = vec4(newCol*vec3((nDotL-distanceFactor)*diffuse),1.);
 			//gl_FragColor = vec4((nDotL-diffuse));
 		}
@@ -399,12 +410,17 @@
 			position += T;
 			return position;
 		}
+
+		attribute float rank;
+		varying float vRank;
+		uniform float noiseOffset;
 		void main() {
 			vUv = uv * uvScale + uvOffset;
 			vec3 pos = position;
+			vRank = rank;
 			transform(pos, translation);
 			pos.z = 0.;
-			pos.z = pos.z - snoise(pos*5000.)/1000.;
+			pos.z = pos.z - snoise(pos*5000.+noiseOffset)/3000.;
 
 			vec3 lightposition = vec3(u_mouse.x*150.*3., u_mouse.y*150.*3., .1);
 			vLight = lightposition;		
