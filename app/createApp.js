@@ -7,6 +7,7 @@ import meshLine from 'three.meshline'
 import {TweenMax} from "gsap";
 import Grid from './components/grid.js'
 import SecondGrid from './components/grid2.js'
+import ParticleLogo from './components/particleLogo.js'
 
 class createApp {
 	constructor(opt) {
@@ -25,11 +26,11 @@ class createApp {
 		if(!this.mobile) {
 			this.controls = orbitControls({
 				position : [0,0,0],
-				distance:0.0146,
+				distance:5,
 				zoom: true,
-				zoomSpeed: 0.000007,
+				zoomSpeed: 0.0007,
 				//rotate: false,
-				rotateSpeed: 0.0009,
+				rotateSpeed: 0.009,
 				damping: 0.05,
 			})
 		} else {
@@ -56,47 +57,9 @@ class createApp {
 		window.addEventListener('resize', this.onResize.bind(this))
 		// window.addEventListener('mousemove', this.onMouseMove.bind(this))
 		// window.addEventListener('touchmove', this.onTouchMove.bind(this))
-		 window.addEventListener('click', this.onMouseClick.bind(this))
+		//  window.addEventListener('click', this.onMouseClick.bind(this))
 	
-		// let video = document.getElementById( 'video' );
-
-        // let texture = new THREE.VideoTexture( video );
-        // texture.minFilter = THREE.LinearFilter;
-        // texture.magFilter = THREE.LinearFilter;
-		// texture.format = THREE.RGBFormat;
-		
-
-        // // tl = new THREE.TextureLoader();
-        // // tl.setCrossOrigin( "Anonymous" );
-        // // tl.load("../sand.jpg", function( t ) {
-        // //   material.uniforms.texture.value = t;
-        // // });
-
-		// this.videoMaterial = new THREE.ShaderMaterial({
-		// 	color: 'white',
-		// 	map: texture,
-		// 	uniforms: {
-		// 		texture: {
-		// 			type:"t",
-		// 			value: texture,
-		// 		},
-		// 		texture2: {
-		// 			type:"t",
-		// 			value:0,
-		// 		},
-		// 		ratio: {
-		// 			type:"f",
-		// 			value:0,
-		// 		}
-		// 	},
-		// 	fragmentShader: document.getElementById('vidFrag').innerHTML, 
-		// 	vertexShader: document.getElementById('vidVert').innerHTML, 
-		// })
-
-		// this.videoGeometry = new THREE.PlaneGeometry(0.0142,0.0142,2,2)
-		// this.videoMesh = new THREE.Mesh(this.videoGeometry, this.videoMaterial);
-		// this.videoMesh.position.z = -0.005;
-		// this.scene.add(this.videoMesh)
+	
 
 		this.rawCoords = [
 			{
@@ -148,13 +111,9 @@ class createApp {
 			},
 		]
 
-		// let geo = new THREE.PlaneGeometry(10,10,120,120);
-		// let mat = new THREE.MeshBasicMaterial({color:"#ffffff",wireframe:true})
+	
+		this.particleLogo = new ParticleLogo({scene: this.scene})
 
-		// let meshh = new THREE.Mesh(geo, mat)
-		// this.scene.add(meshh)
-		// meshh.rotation.z = Math.PI/4
-		
 		this.mouse = {
 			x : -this.winWidth/2,
 			y:this.winHeight/2,
@@ -192,7 +151,7 @@ class createApp {
 		this.composer.addPass(this.copyPass)
 
 		this.time = 0
-		this.initCoords()
+		//this.initCoords()
 		this.animate()
 		
 	}
@@ -206,7 +165,7 @@ class createApp {
 			this.treatedCoords.push(this.newPos.x, this.newPos.y, this.newPos.z)
 
 		}
-		this.grid2 = new SecondGrid({count:this.count, scene: this.scene, coords: this.treatedCoords,  screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera), squareRatio: this.squareRatio })
+		//this.grid2 = new SecondGrid({count:this.count, scene: this.scene, coords: this.treatedCoords,  screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera), squareRatio: this.squareRatio })
 		//this.grid = new Grid({count: 10201, scene: this.scene, coords:this.treatedCoords, screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera)})
 
 	}
@@ -258,37 +217,36 @@ class createApp {
 		this.camera2.lookAt(this.target);
 		this.time += 1/16
 		// this.grid.grid.material.uniforms.u_time.value = this.time
-		this.grid2.grid.material.uniforms.u_time.value = this.time
+		// this.grid2.grid.material.uniforms.u_time.value = this.time
 
 
 		this.copyPass.material.uniforms.u_time.value = this.time
 
-		this.mouseX = ((this.mouse.x)/this.winWidth)*2-1
-		this.mouseY = -((this.mouse.y)/this.winHeight)*2+1	
+		// this.mouseX = ((this.mouse.x)/this.winWidth)*2-1
+		// this.mouseY = -((this.mouse.y)/this.winHeight)*2+1	
 
-		this.animX = ((this.anim.x)/this.winWidth)*2-1
-		this.animY = -((this.anim.y)/this.winHeight)*2+1	
+		// this.animX = ((this.anim.x)/this.winWidth)*2-1
+		// this.animY = -((this.anim.y)/this.winHeight)*2+1	
 
-		this.mousePos = new THREE.Vector3(this.mouseX, this.mouseY,-1).unproject(this.camera)
-		this.animPos = new THREE.Vector3(this.animX, this.animY,-1).unproject(this.camera)
-		// var distX = this.mousePos.x - this.currentPos.x;
-		// var distY = this.mousePos.y - this.currentPos.y;
+		// this.mousePos = new THREE.Vector3(this.mouseX, this.mouseY,-1).unproject(this.camera)
+		// this.animPos = new THREE.Vector3(this.animX, this.animY,-1).unproject(this.camera)
+		// // var distX = this.mousePos.x - this.currentPos.x;
+		// // var distY = this.mousePos.y - this.currentPos.y;
 
-		// this.currentPos.x += distX/15;
-		// this.currentPos.y += distY/15;
+		// // this.currentPos.x += distX/15;
+		// // this.currentPos.y += distY/15;
 
-		this.currentPos.x = this.mousePos.x;
-		this.currentPos.y = this.mousePos.y;
+		// this.currentPos.x = this.mousePos.x;
+		// this.currentPos.y = this.mousePos.y;
 		
-		this.grid2.grid.material.uniforms.u_mouse.value.x = this.currentPos.x
-		this.grid2.grid.material.uniforms.u_mouse.value.y = this.currentPos.y
+		// this.grid2.grid.material.uniforms.u_mouse.value.x = this.currentPos.x
+		// this.grid2.grid.material.uniforms.u_mouse.value.y = this.currentPos.y
 	
 		
-		this.grid2.grid.material.uniforms.u_anim.value.x = this.animPos.x
-		this.grid2.grid.material.uniforms.u_anim.value.y = this.animPos.y
+		// this.grid2.grid.material.uniforms.u_anim.value.x = this.animPos.x
+		// this.grid2.grid.material.uniforms.u_anim.value.y = this.animPos.y
 
 		this.composer.render(this.scene, this.camera2)
-		//this.grid.grid.material.uniforms.u_time = this.time
 	}
 }
 

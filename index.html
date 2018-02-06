@@ -588,6 +588,53 @@
 			gl_Position = gl_Position = projectionMatrix*modelViewMatrix*vec4(position, 1.);
 		}
 	</script>	
+
+	<script type="x-shader/x-fragment" id="particleFrag">
+		void main() {
+			gl_FragColor = vec4(1.);
+		}
+	</script>
+
+	<script type="x-shader/x-vertex" id="particleVert">
+
+		precision highp float;
+		uniform mat4 modelViewMatrix;
+		uniform mat4 projectionMatrix;
+		uniform mat3 normalMatrix;
+		
+		//'blueprint' attribute
+		attribute vec3 position;
+		
+		//instance attributes 
+		attribute vec3 translation;
+		attribute vec4 rotation;
+		
+		vec3 transform( inout vec3 position, vec3 T, vec4 R ) {
+
+			position *= 0.03;
+			position += 2.0 * cross( R.xyz, cross( R.xyz, position ) + R.w * position );
+			position += T;
+
+			return position;
+		}
+		
+		//re-use position for shading
+		varying vec3 vPos;
+		void main() {
+			//collects the 'blueprint' coordinates
+			vec3 pos = position;
+			//transform it
+			transform( pos, translation, rotation);
+			//project to get the fragment position
+			gl_Position = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
+			//just to render something :)
+			vPos = pos;
+		}
+	</script>
+
+
+
+
 	<script src="bundle.js"></script>
 </body>
 </html>
