@@ -1,72 +1,53 @@
-import logo from '../logo3'
+import * as THREE from 'three'
 import OBJLoader from 'three-obj-loader';
+
+import geometryUtils from '../vendor/geometryUtils'
 OBJLoader(THREE);
 import MTLLoader from 'three-mtl-loader';
-import * as THREE from 'three'
+
 class ParticleLogo {
     constructor(opt) {
-        this.instancedGeo = new THREE.InstancedBufferGeometry();
+        this.instancedGeo = new THREE.BufferGeometry();
         this.scene = opt.scene
         this.stadium = 0;
-        //this.loadJSON()
-        this.loadOBJ()
+        
+        this.loadJSONObject()
+        this.loadJSON()
+        //this.loadOBJ()
     }
 
-    createBlueprint() {
-        this.blueprint = [];
-        for ( var i = 0; i < 3; i++){
-            var a = Math.PI / 180 * 120 * i;
-            this.blueprint.push( Math.cos( a ), Math.sin( a ), 0 );
-        }
-        console.log(this.blueprint)
-
-        let attribute =  new THREE.BufferAttribute(new Float32Array(this.blueprint),3)
-        this.instancedGeo.addAttribute('position', attribute)      
-    }
-
+  
     instanceBlueprint(positions) {
-        console.log(positions)
         this.count = positions.length/3
         let translation = new Float32Array(this.count*3)
         let newPos = new Float32Array(this.count*3)
-        let rotation = new Float32Array(this.count*4)
-
+       
+    
         let translationIterator = 0;
-        let rotationIterator= 0;
+
+
+        //this.redrawBuffer(positions)
+
+
         let newPosIterator= 0;
 
         let q = new THREE.Quaternion()
 
         for ( let i = 0; i < this.count; i++) {
-            translation[translationIterator++] = Math.sin((i/this.count*Math.PI*30))*Math.sin(i/this.count*Math.PI)
-            translation[translationIterator++] =  Math.cos((i/this.count*Math.PI*30))*Math.sin(i/this.count*Math.PI)
-            translation[translationIterator++] = Math.cos((i/this.count*Math.PI))
+            translation[translationIterator++] = this.logoBuffer[translationIterator-1]
+            translation[translationIterator++] = this.logoBuffer[translationIterator-1]
+            translation[translationIterator++] =this.logoBuffer[translationIterator-1]
 
-            newPos[newPosIterator++] = positions[newPosIterator-1]/10.
-            newPos[newPosIterator++] = positions[newPosIterator-1]/10.
-            newPos[newPosIterator++] =   positions[newPosIterator-1]/10.
+            newPos[newPosIterator++] = positions[newPosIterator-1]*2.
+            newPos[newPosIterator++] = positions[newPosIterator-1]*2.
+            newPos[newPosIterator++] =   positions[newPosIterator-1]*2.
 
 
-            q.set(  ( Math.random() - .5 ) * 2,
-            ( Math.random() - .5 ) * 2,
-                ( Math.random() - .5 ) * 2,
-                Math.random() * Math.PI );
-            q.normalize();
-    
-            //assign to bufferAttribute
-            rotation[ rotationIterator++ ] = q.x;
-            rotation[ rotationIterator++ ] = q.y;
-            rotation[ rotationIterator++ ] = q.z;
-            rotation[ rotationIterator++ ] = q.w;
         }
 
-        this.instancedGeo.addAttribute('translation', new THREE.InstancedBufferAttribute(translation,3,1))
-        this.instancedGeo.addAttribute('newPos', new THREE.InstancedBufferAttribute(newPos,3,1))
-        this.instancedGeo.addAttribute( 'rotation', new THREE.InstancedBufferAttribute( rotation, 4, 1 ) );
-        console.log(newPos)
-
-        console.log(translation)
-
+        this.instancedGeo.addAttribute('position', new THREE.BufferAttribute(translation,3,1))
+        this.instancedGeo.addAttribute('newPos', new THREE.BufferAttribute(newPos,3,1))
+      
         let material = new THREE.RawShaderMaterial(
             {   uniforms: {
                     u_time: {
@@ -91,26 +72,12 @@ class ParticleLogo {
                 vertexShader: document.getElementById('particleVert').innerHTML,
                 fragmentShader: document.getElementById('particleFrag').innerHTML,
                 side: THREE.DoubleSide,
-                wireframe: false,              
+                wireframe: false,
+                transparent: true,              
             }
         )
 
-        this.mesh = new THREE.Mesh(this.instancedGeo, material)
-        console.log(this.mesh.geometry.attributes)
-
-        // let scene = this.scene
-        // var loader = new THREE.JSONLoader();
-        // loader.load( 'app/logo3.json', function ( geometry ) {
-        // var mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial({wireframe: true}) );
-
-        //                 mesh.position.x =0;
-        //                 mesh.position.y =0;
-        //                 mesh.position.z =0;
-        // scene.add( mesh );
-        // console.log(mesh.geometry)
-
-        // }); 
-
+        this.mesh = new THREE.Points(this.instancedGeo, material)
        
         this.scene.add(this.mesh)
     }
@@ -121,44 +88,86 @@ class ParticleLogo {
         fetch('app/pos.json')
         .then(res => res.json())
         .then((out) => {
-            this.createBlueprint()
-            this.instanceBlueprint(out)
+            let buffer = new Float32Array(out.positions.length)
+            for (let i = 0; i < buffer.length; i++) {
+                buffer[i] = out.positions[i]
+                
+            }
+            this.instanceBlueprint(buffer)
         })
         .catch(err => { throw err });
+    }
+
+    loadJSONObject() {
+        let scene = this.scene
+        var loader = new THREE.JSONLoader();
+        self =this;
+        loader.load( 'app/logo3.json', function ( geometry ) {   
+        
+            let mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({wireframe:true})) 
+            let newPositions =  geometryUtils.randomPointsInGeometry( geometry,458424/3 )
+
+            self.transformVectorToBuffer(newPositions)
+        }); 
+
+    }
+    
+    transformVectorToBuffer(newPositions) {
+        let logoBuffer = new Float32Array(newPositions.length*3)
+
+        let logoBufferIterator = 0
+        for (let i = 0; i < logoBuffer.length; i++) {
+           
+            logoBuffer[logoBufferIterator++] = newPositions[Math.floor((i)/3)].x
+        
+           
+            logoBuffer[logoBufferIterator++] = newPositions[Math.floor((i)/3)].y  
+           
+            logoBuffer[logoBufferIterator++] = newPositions[Math.floor((i)/3)].z  
+        }
+        this.logoBuffer = logoBuffer
     }
 
     loadOBJ() {
         var loader = new THREE.OBJLoader();
         let scene = this.scene
         // load a resource
-
+        
         self = this
-            loader.load(
-                // resource URL
-                'app/Elephant.obj',
-                // called when resource is loaded
-                function ( object ) {
-                    console.log(object,'object')
-                    console.log(self)
-                    
-                    self.createBlueprint()
-                    self.instanceBlueprint(object.children[0].geometry.attributes.position.array)
-    
-                },
-                // called when loading is in progresses
-                function ( xhr ) {
-    
-                    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-    
-                },
-                // called when loading has errors
-                function ( error ) {
-    
-                    console.log( 'An error happened' );
-    
-                }
-            );
+        loader.load(
+            // resource URL
+            'app/Elephant.obj',
+            // called when resource is loaded
+            function ( object ) {
+                console.log(object)    
+                self.instanceBlueprint(object.children[0].geometry.attributes.position.array)
+
+            },
+            // called when loading is in progresses
+            function ( xhr ) {
+
+                console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+            },
+            // called when loading has errors
+            function ( error ) {
+
+                console.log( 'An error happened' );
+
+            }
+        );
             
+    }
+
+    redrawBuffer(buffer) {
+
+      
+        let uniqueArray  = buffer.filter(function(elem,index,self) {
+        return  index == self.indexOf(elem)
+
+
+        })
+        console.log(uniqueArray)
     }
 }
 

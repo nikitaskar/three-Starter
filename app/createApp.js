@@ -26,7 +26,7 @@ class createApp {
 		if(!this.mobile) {
 			this.controls = orbitControls({
 				position : [0,0,0],
-				distance:5,
+				distance:10,
 				zoom: true,
 				zoomSpeed: 0.0007,
 				//rotate: false,
@@ -216,7 +216,7 @@ class createApp {
 		this.camera2.position.fromArray(this.controls.position);
 		this.camera2.up.fromArray(this.controls.up);
 		this.camera2.lookAt(this.target);
-		this.time += 1/200
+		this.time += 1/150
 		// this.grid.grid.material.uniforms.u_time.value = this.time
 		// this.grid2.grid.material.uniforms.u_time.value = this.time
 
@@ -246,9 +246,10 @@ class createApp {
 		
 		// this.grid2.grid.material.uniforms.u_anim.value.x = this.animPos.x
 		// this.grid2.grid.material.uniforms.u_anim.value.y = this.animPos.y
-	
-		console.log(this.time)
+		if(this.particleLogo.mesh) {
 			this.particleLogo.mesh.material.uniforms.u_time.value = this.time
+		}
+		
 
 		
 		this.composer.render(this.scene, this.camera2)
