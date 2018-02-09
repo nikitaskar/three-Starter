@@ -11,6 +11,7 @@ class ParticleLogo {
         this.scene = opt.scene
         this.stadium = 0;
         
+        
         this.loadJSONObject()
         this.loadJSON()
         //this.loadOBJ()
@@ -34,9 +35,13 @@ class ParticleLogo {
         let q = new THREE.Quaternion()
 
         for ( let i = 0; i < this.count; i++) {
+
+            this.alpha = Math.random()*(Math.PI*2)
+            this.theta = Math.random()*(Math.PI)
+         
             translation[translationIterator++] = this.logoBuffer[translationIterator-1]
             translation[translationIterator++] = this.logoBuffer[translationIterator-1]
-            translation[translationIterator++] =this.logoBuffer[translationIterator-1]
+            translation[translationIterator++] = this.logoBuffer[translationIterator-1]
 
             newPos[newPosIterator++] = positions[newPosIterator-1]*2.
             newPos[newPosIterator++] = positions[newPosIterator-1]*2.
@@ -62,7 +67,7 @@ class ParticleLogo {
                         }
                     },
                     u_mouse: {
-                        type: 'v2',
+                        type: 'v3',
                         value: {
                             x:0,
                             y:0,

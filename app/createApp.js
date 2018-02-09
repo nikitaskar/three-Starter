@@ -45,7 +45,7 @@ class createApp {
 			})
 		}
 		this.time = 0
-	
+		this.raycaster = new THREE.Raycaster()
 		this.currentPos = {
 			x:0,
 			y:0,
@@ -56,11 +56,11 @@ class createApp {
 		document.body.appendChild(this.renderer.domElement)
 
 		window.addEventListener('resize', this.onResize.bind(this))
-		// window.addEventListener('mousemove', this.onMouseMove.bind(this))
+		 window.addEventListener('mousemove', this.onMouseMove.bind(this))
 		// window.addEventListener('touchmove', this.onTouchMove.bind(this))
 		//  window.addEventListener('click', this.onMouseClick.bind(this))
 	
-	
+
 
 		this.rawCoords = [
 			{
@@ -115,10 +115,7 @@ class createApp {
 	
 		this.particleLogo = new ParticleLogo({scene: this.scene})
 
-		this.mouse = {
-			x : -this.winWidth/2,
-			y:this.winHeight/2,
-		}
+		this.mouse = new THREE.Vector2()
 
 		this.anim = {
 			x: this.winWidth/2,
@@ -175,9 +172,9 @@ class createApp {
 	onMouseMove(e) {
 		let mouseX = e.clientX
 		let mouseY = e.clientY
-		
-		this.mouseX = ((mouseX)/this.winWidth)*2-1
-		this.mouseY = -((mouseY)/this.winHeight)*2+1	
+
+		this.mouse.x = ((mouseX)/this.winWidth)*2-1
+		this.mouse.y = -((mouseY)/this.winHeight)*2+1	
 	
 	}
 
@@ -192,8 +189,8 @@ class createApp {
 
 	onTouchMove(e) {
 		
-		this.mouseX = ((mouseX)/this.winWidth)*2-1
-		this.mouseY = -((mouseY)/this.winHeight)*2+1	
+		this.mouse.x = ((mouseX)/this.winWidth)*2-1
+		this.mouse.y = -((mouseY)/this.winHeight)*2+1	
 	
 	}
 
@@ -220,16 +217,19 @@ class createApp {
 		// this.grid.grid.material.uniforms.u_time.value = this.time
 		// this.grid2.grid.material.uniforms.u_time.value = this.time
 
+		//this.raycaster.setFromCamera( this.mouse, this.camera2 );
+		//console.log(this.raycaster.ray.origin)
 
 		this.copyPass.material.uniforms.u_time.value = this.time
-
+	
 		// this.mouseX = ((this.mouse.x)/this.winWidth)*2-1
 		// this.mouseY = -((this.mouse.y)/this.winHeight)*2+1	
 
 		// this.animX = ((this.anim.x)/this.winWidth)*2-1
 		// this.animY = -((this.anim.y)/this.winHeight)*2+1	
-
-		// this.mousePos = new THREE.Vector3(this.mouseX, this.mouseY,-1).unproject(this.camera)
+	
+		this.mousePos = new THREE.Vector3(this.mouse.x, this.mouse.y,-1).unproject(this.camera2)
+		//console.log(this.mousePos)
 		// this.animPos = new THREE.Vector3(this.animX, this.animY,-1).unproject(this.camera)
 		// // var distX = this.mousePos.x - this.currentPos.x;
 		// // var distY = this.mousePos.y - this.currentPos.y;
@@ -248,6 +248,10 @@ class createApp {
 		// this.grid2.grid.material.uniforms.u_anim.value.y = this.animPos.y
 		if(this.particleLogo.mesh) {
 			this.particleLogo.mesh.material.uniforms.u_time.value = this.time
+			// this.particleLogo.mesh.material.uniforms.u_mouse.value.x = this.mousePos.x
+			// this.particleLogo.mesh.material.uniforms.u_mouse.value.y = this.mousePos.y
+			// this.particleLogo.mesh.material.uniforms.u_mouse.value.z = 0
+	
 		}
 		
 
