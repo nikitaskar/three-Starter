@@ -20,12 +20,13 @@ class ParticleLogo {
   
     instanceBlueprint(positions) {
         this.count = positions.length/3
+        console.log(this.count)
         let translation = new Float32Array(this.count*3)
         let newPos = new Float32Array(this.count*3)
-       
+       console.log(translation)
     
         let translationIterator = 0;
-
+        console.log(this.logoBuffer)
 
         //this.redrawBuffer(positions)
 
@@ -130,7 +131,9 @@ class ParticleLogo {
            
             logoBuffer[logoBufferIterator++] = newPositions[Math.floor((i)/3)].z  
         }
+      
         this.logoBuffer = logoBuffer
+       // this.redrawBuffer(logoBuffer)
     }
 
     loadOBJ() {
@@ -168,11 +171,12 @@ class ParticleLogo {
 
       
         let uniqueArray  = buffer.filter(function(elem,index,self) {
+            console.log('ok')
         return  index == self.indexOf(elem)
-
+            
 
         })
-        console.log(uniqueArray)
+      this.logoBuffer = uniqueArray
     }
 }
 

@@ -50,7 +50,7 @@ class createApp {
 			x:0,
 			y:0,
 		}
-		this.renderer = new THREE.WebGLRenderer({antialias: true, alpha:true})
+		this.renderer = new THREE.WebGLRenderer()
 		this.renderer.setSize(this.winWidth, this.winHeight)
 
 		document.body.appendChild(this.renderer.domElement)
@@ -228,14 +228,20 @@ class createApp {
 		// this.animX = ((this.anim.x)/this.winWidth)*2-1
 		// this.animY = -((this.anim.y)/this.winHeight)*2+1	
 	
-		this.mousePos = new THREE.Vector3(this.mouse.x, this.mouse.y,-1).unproject(this.camera2)
+		//this.mousePos = new THREE.Vector3(this.mouse.x, this.mouse.y, 0.5).unproject(this.camera2 )
+		var vector = new THREE.Vector3(this.mouse.x, this.mouse.y, -1);
+		vector.unproject( this.camera2 );
+		var dir = vector.sub( this.camera2.position ).normalize();
+		var distance = - this.camera2.position.z / dir.z;
+		var pos = this.camera2.position.clone().add( dir.multiplyScalar( distance ) );
+	
 		//console.log(this.mousePos)
 		// this.animPos = new THREE.Vector3(this.animX, this.animY,-1).unproject(this.camera)
-		// // var distX = this.mousePos.x - this.currentPos.x;
-		// // var distY = this.mousePos.y - this.currentPos.y;
+		var distX = pos.x - this.currentPos.x;
+		var distY = pos.y - this.currentPos.y;
 
-		// // this.currentPos.x += distX/15;
-		// // this.currentPos.y += distY/15;
+		this.currentPos.x += distX/15;
+		this.currentPos.y += distY/15;
 
 		// this.currentPos.x = this.mousePos.x;
 		// this.currentPos.y = this.mousePos.y;
@@ -248,9 +254,12 @@ class createApp {
 		// this.grid2.grid.material.uniforms.u_anim.value.y = this.animPos.y
 		if(this.particleLogo.mesh) {
 			this.particleLogo.mesh.material.uniforms.u_time.value = this.time
-			// this.particleLogo.mesh.material.uniforms.u_mouse.value.x = this.mousePos.x
-			// this.particleLogo.mesh.material.uniforms.u_mouse.value.y = this.mousePos.y
-			// this.particleLogo.mesh.material.uniforms.u_mouse.value.z = 0
+			//this.particleLogo.mesh.rotation.y += 0.01
+			//console.log(this.camera2.position.z)
+			this.particleLogo.mesh.material.uniforms.u_mouse.value.x = this.currentPos.x
+			this.particleLogo.mesh.material.uniforms.u_mouse.value.y = this.currentPos.y
+		
+			this.particleLogo.mesh.material.uniforms.u_mouse.value.z = pos.z
 	
 		}
 		
