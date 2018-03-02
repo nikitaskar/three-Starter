@@ -562,8 +562,8 @@
 			vec4 texel = texture2D( tDiffuse, vUv );
 			float time = u_time;
 			vec3 light = 1.-vec3(distance(vec2(0.5, 0.5*(1336./2071.)),gl_FragCoord.xy/2071.))*3.;
-			//vec4 newCol = mix(texel,vec4((snoise(vPos*10000000.+u_time*3.)+1.)*light,1.), .05);
-			gl_FragColor = texel;
+			vec4 newCol = mix(texel,vec4((snoise(vPos*10000000.+u_time*3.)+1.)*light,1.), .05);
+			gl_FragColor = newCol;
 		}
 	</script>
 
@@ -591,6 +591,7 @@
 	</script>	
 
 	<script type="x-shader/x-fragment" id="particleFrag">
+		#extension GL_OES_standard_derivatives : enable
 		precision highp float;
 		uniform float u_time;
 	
@@ -720,9 +721,30 @@
 			
 			}
 		varying vec3 vPos;
+		uniform sampler2D envmap;
+		uniform mat3 normalMatrix;
+		uniform mat4 modelViewMatrix;
 		void main() {
+
+			vec3 fdx = dFdx( vPos );
+			vec3 fdy = dFdy( vPos );
+			vec3 normal = normalize( cross( fdx, fdy ) );
+
+			vec3 e = normalize( vec3( modelViewMatrix * vec4(vPos,1.) ) );
+			vec3 n = normalize( normalMatrix * normal );
+		  
+			vec3 r = reflect( e, n );
+			float m = 3.*sqrt(
+			  pow( r.x, 2. ) +
+			  pow( r.y, 2. ) +
+			  pow( r.z + 1., 2. )
+			);
+			vec2 vN = (r.xy / m + .5);
+
+			vec4 text = texture2D(envmap, vN);
 			
-			gl_FragColor = vec4(vec3(1.), clamp(0.05,curlNoise(sin(vPos*2.)*cos(vPos/10.*u_time)+u_time/3.).x,0.08));
+			//gl_FragColor = vec4(vec3(curlNoise(vPos*u_time))*text.rgb,1);
+			gl_FragColor = text;
 		}
 	</script>
 
@@ -872,11 +894,11 @@
 		uniform float u_time;
 		//uniform vec2 u_mouse;
 		void main() {
-			gl_PointSize = 1.;
 			//collects the 'blueprint' coordinates
-			vec3 pos = position;
-			pos = (pos+(curlNoise(pos+u_time/3.)*max(1., 1.-u_time)));
-			pos = pos + u_mouse;
+		
+			vec3 pos = position +translation;
+			pos = (pos+(curlNoise(pos/2.+u_time/10.)));
+			//pos = pos + u_mouse;
 			//vec3 newP = newPos;
 			//transform it
 			

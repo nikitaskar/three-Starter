@@ -149,6 +149,8 @@ class createApp {
 		this.composer.addPass(this.copyPass)
 
 		this.time = 0
+
+		this.createSphere()
 		//this.initCoords()
 		this.animate()
 		
@@ -166,6 +168,10 @@ class createApp {
 		//this.grid2 = new SecondGrid({count:this.count, scene: this.scene, coords: this.treatedCoords,  screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera), squareRatio: this.squareRatio })
 		//this.grid = new Grid({count: 10201, scene: this.scene, coords:this.treatedCoords, screenRatio: new THREE.Vector3(1, -1,-1).unproject(this.camera)})
 
+	}
+
+	createSphere() {
+	
 	}
 
 

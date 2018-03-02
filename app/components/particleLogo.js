@@ -7,25 +7,33 @@ import MTLLoader from 'three-mtl-loader';
 
 class ParticleLogo {
     constructor(opt) {
-        this.instancedGeo = new THREE.BufferGeometry();
+        this.instancedGeo = new THREE.InstancedBufferGeometry();
         this.scene = opt.scene
         this.stadium = 0;
         
         
+        this.blueprint()
         this.loadJSONObject()
-        this.loadJSON()
+        //this.loadJSON()
         //this.loadOBJ()
     }
 
+    blueprint() {
+        let geometry = new THREE.TetrahedronBufferGeometry(0.05,0)
+        let position = geometry.attributes.position.array
+        let uv = geometry.attributes.uv.array
+        this.instancedGeo.addAttribute('position', new THREE.BufferAttribute(position, 3))
+        this.instancedGeo.addAttribute('uv', new THREE.BufferAttribute(uv, 3))
+    }
   
-    instanceBlueprint(positions) {
-        this.count = positions.length/3
+    instanceBlueprint() {
+        this.count = 999/3
         console.log(this.count)
         let translation = new Float32Array(this.count*3)
-        let newPos = new Float32Array(this.count*3)
-       console.log(translation)
+        var rotation = new Float32Array( this.count * 4 );
     
         let translationIterator = 0;
+        var rotationIterator = 0;
         console.log(this.logoBuffer)
 
         //this.redrawBuffer(positions)
@@ -44,16 +52,25 @@ class ParticleLogo {
             translation[translationIterator++] = this.logoBuffer[translationIterator-1]
             translation[translationIterator++] = this.logoBuffer[translationIterator-1]
 
-            newPos[newPosIterator++] = positions[newPosIterator-1]*2.
-            newPos[newPosIterator++] = positions[newPosIterator-1]*2.
-            newPos[newPosIterator++] =   positions[newPosIterator-1]*2.
+            q.set(  ( Math.random() - .5 ) * 2,
+                ( Math.random() - .5 ) * 2,
+                ( Math.random() - .5 ) * 2,
+                Math.random() * Math.PI );
+        q.normalize();
+
+        //assign to bufferAttribute
+        rotation[ rotationIterator++ ] = q.x;
+        rotation[ rotationIterator++ ] = q.y;
+        rotation[ rotationIterator++ ] = q.z;
+        rotation[ rotationIterator++ ] = q.w;
 
 
         }
 
-        this.instancedGeo.addAttribute('position', new THREE.BufferAttribute(translation,3,1))
-        this.instancedGeo.addAttribute('newPos', new THREE.BufferAttribute(newPos,3,1))
-      
+        this.instancedGeo.addAttribute('translation', new THREE.InstancedBufferAttribute(translation,3,1))
+        this.instancedGeo.addAttribute( 'rotation', new THREE.InstancedBufferAttribute( rotation, 4, 1 ) );
+
+        console.log(this.instancedGeo)
         let material = new THREE.RawShaderMaterial(
             {   uniforms: {
                     u_time: {
@@ -73,17 +90,27 @@ class ParticleLogo {
                             x:0,
                             y:0,
                         }
+                    }, 
+                    envmap: {
+                        type:'t', 
+                        value:0
                     }
                 },
                 vertexShader: document.getElementById('particleVert').innerHTML,
                 fragmentShader: document.getElementById('particleFrag').innerHTML,
                 side: THREE.DoubleSide,
-                wireframe: false,
-                transparent: true,              
+                wireframe: false,    
+                transparent: false,      
             }
         )
 
-        this.mesh = new THREE.Points(this.instancedGeo, material)
+        var tl = new THREE.TextureLoader();
+        tl.setCrossOrigin( "Anonymous" );
+        tl.load("../matCapFlame.jpg", function( t ) {
+          material.uniforms.envmap.value = t;
+        });
+
+        this.mesh = new THREE.Mesh(this.instancedGeo, material)
        
         this.scene.add(this.mesh)
     }
@@ -99,7 +126,8 @@ class ParticleLogo {
                 buffer[i] = out.positions[i]
                 
             }
-            this.instanceBlueprint(buffer)
+            console.log(buffer)
+            
         })
         .catch(err => { throw err });
     }
@@ -111,7 +139,7 @@ class ParticleLogo {
         loader.load( 'app/logo3.json', function ( geometry ) {   
         
             let mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({wireframe:true})) 
-            let newPositions =  geometryUtils.randomPointsInGeometry( geometry,458424/3 )
+            let newPositions =  geometryUtils.randomPointsInGeometry( geometry,999/3 )
 
             self.transformVectorToBuffer(newPositions)
         }); 
@@ -132,7 +160,9 @@ class ParticleLogo {
             logoBuffer[logoBufferIterator++] = newPositions[Math.floor((i)/3)].z  
         }
       
-        this.logoBuffer = logoBuffer
+        this.redrawBuffer(logoBuffer)
+        //this.logoBuffer = logoBuffer
+        this.instanceBlueprint()
        // this.redrawBuffer(logoBuffer)
     }
 
@@ -172,10 +202,11 @@ class ParticleLogo {
       
         let uniqueArray  = buffer.filter(function(elem,index,self) {
             console.log('ok')
-        return  index == self.indexOf(elem)
+            return  index == self.indexOf(elem)
             
 
         })
+      
       this.logoBuffer = uniqueArray
     }
 }
